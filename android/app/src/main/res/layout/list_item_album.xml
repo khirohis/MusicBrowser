@@ -4,16 +4,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <import type="net.hogelab.musicbrowser.mvvm.viewmodel.ArtistListItemViewModel" />
+        <import type="net.hogelab.musicbrowser.viewmodel.AlbumListItemViewModel" />
 
         <variable
             name="viewModel"
-            type="ArtistListItemViewModel" />
+            type="AlbumListItemViewModel" />
     </data>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="56dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingTop="8dp"

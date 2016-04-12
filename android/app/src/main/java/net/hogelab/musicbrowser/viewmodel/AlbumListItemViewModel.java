@@ -1,4 +1,4 @@
-package net.hogelab.musicbrowser.mvvm.viewmodel;
+package net.hogelab.musicbrowser.viewmodel;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -9,10 +9,10 @@ import android.view.View;
 import net.hogelab.musicbrowser.R;
 
 /**
- * Created by kobayasi on 2016/04/08.
+ * Created by kobayasi on 2016/04/11.
  */
-public class ArtistListItemViewModel {
-    private static final String TAG = ArtistListItemViewModel.class.getSimpleName();
+public class AlbumListItemViewModel {
+    private static final String TAG = AlbumListItemViewModel.class.getSimpleName();
 
     private Context context;
 
@@ -20,12 +20,12 @@ public class ArtistListItemViewModel {
     private String subtitle;
     private String thumbnailUrl;
 
-    public ArtistListItemViewModel(Context context, Cursor cursor) {
+    public AlbumListItemViewModel(Context context, Cursor cursor) {
         this.context = context;
 
         title = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM));
         subtitle = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST));
-        thumbnailUrl = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+        thumbnailUrl = "file://" + cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
     }
 
 
@@ -44,7 +44,6 @@ public class ArtistListItemViewModel {
     public String getThumbnailUrl() {
         return thumbnailUrl;
     }
-
 
     public View.OnClickListener onClickListItem() {
         return new View.OnClickListener() {
