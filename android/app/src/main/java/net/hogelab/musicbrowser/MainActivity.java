@@ -1,7 +1,7 @@
 package net.hogelab.musicbrowser;
 
 import android.content.Intent;
-import net.hogelab.musicbrowser.mvvm.view.ArtistListActivity;
+import net.hogelab.musicbrowser.view.ArtistListActivity;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -44,19 +44,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(net.hogelab.musicbrowser.R.menu.main, menu);
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == net.hogelab.musicbrowser.R.id.action_settings) {
             return true;
         }
@@ -67,18 +63,16 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == net.hogelab.musicbrowser.R.id.nav_traditional) {
-            // Handle the camera action
-        } else if (id == net.hogelab.musicbrowser.R.id.nav_mvvm) {
+        if (id == net.hogelab.musicbrowser.R.id.nav_mvvm) {
             Intent intent = new Intent(this, ArtistListActivity.class);
             startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(net.hogelab.musicbrowser.R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
     }
 }

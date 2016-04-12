@@ -5,18 +5,18 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="net.hogelab.musicbrowser.viewmodel.ArtistListRootViewModel" />
+        <import type="net.hogelab.musicbrowser.viewmodel.AlbumListRootViewModel" />
 
         <variable
             name="viewModel"
-            type="ArtistListRootViewModel" />
+            type="AlbumListRootViewModel" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        tools:context=".view.ArtistListActivity">
+        tools:context=".view.AlbumListActivity">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -29,26 +29,24 @@
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
                 app:contentScrim="?attr/colorPrimary"
-                app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:background="?attr/colorPrimary"
-                    app:layout_collapseMode="pin"
                     app:popupTheme="@style/AppTheme.PopupOverlay" />
 
             </android.support.design.widget.CollapsingToolbarLayout>
 
             <TextView
                 android:id="@+id/list_header_content_info"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="?attr/colorPrimary"
-                android:fitsSystemWindows="true"
-                android:text="@{viewModel.contentInfo}"
-                app:layout_scrollFlags="scroll|enterAlways" />
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                android:text="@{viewModel.contentInfo}" />
 
         </android.support.design.widget.AppBarLayout>
 

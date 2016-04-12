@@ -1,9 +1,10 @@
-package net.hogelab.musicbrowser.mvvm.bindingadapter;
+package net.hogelab.musicbrowser.bindingadapter;
 
 import android.content.Context;
 import android.databinding.BindingAdapter;
-import android.util.Log;
 import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by kobayasi on 2016/04/08.
@@ -20,7 +21,7 @@ public class ImageViewBindingAdapterExtension {
         if (imageUrl != null) {
             Context context = imageView.getContext();
             if (context != null) {
-//                Glide.with(context).load(imageUrl).animate(android.R.anim.fade_in).into(imageView);
+                Picasso.with(context).load(imageUrl).into(imageView);
             }
         }
     }
