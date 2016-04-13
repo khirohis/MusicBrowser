@@ -23,13 +23,21 @@ public class ArtistListItemViewModel {
     private String numberOfAlbums;
     private String numberOfTracks;
 
+
     public ArtistListItemViewModel(Context context, Cursor cursor) {
         this.context = context;
 
-        artistId = Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID)));
-        artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST));
-        numberOfAlbums = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS));
-        numberOfTracks = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS));
+        setData(cursor);
+    }
+
+
+    public void setData(Cursor cursor) {
+        if (cursor != null) {
+            artistId = Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID)));
+            artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST));
+            numberOfAlbums = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS));
+            numberOfTracks = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS));
+        }
     }
 
 

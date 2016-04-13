@@ -27,7 +27,19 @@ public final class AudioMediaStoreCursorLoaderFactory {
     };
 
 
-    public static final CursorLoader createArtistsCursorLoader(Context context) {
+    public static final CursorLoader createArtistCursorLoader(Context context, long artistId) {
+        String selection = MediaStore.Audio.Artists._ID + "=?";
+        String[] selectionArgs = new String[] { Long.toString(artistId) };
+
+        return new CursorLoader(context,
+                MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+                ARTISTS_FIELDS_PROJECTION,
+                selection,
+                selectionArgs,
+                MediaStore.Audio.Artists.DEFAULT_SORT_ORDER);
+    }
+
+    public static final CursorLoader createArtistListCursorLoader(Context context) {
         return new CursorLoader(context,
                 MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
                 ARTISTS_FIELDS_PROJECTION,
@@ -36,7 +48,7 @@ public final class AudioMediaStoreCursorLoaderFactory {
                 MediaStore.Audio.Artists.DEFAULT_SORT_ORDER);
     }
 
-    public static final CursorLoader createAlbumsCursorLoader(Context context) {
+    public static final CursorLoader createAlbumListCursorLoader(Context context) {
         return new CursorLoader(context,
                 MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
                 ALBUM_FIELDS_PROJECTION,
@@ -46,9 +58,9 @@ public final class AudioMediaStoreCursorLoaderFactory {
     }
 
 
-    public static final CursorLoader createAlbumsCursorLoader(Context context, long byArtistId) {
+    public static final CursorLoader createAlbumListCursorLoader(Context context, long artistId) {
         return new CursorLoader(context,
-                MediaStore.Audio.Artists.Albums.getContentUri("external", byArtistId),
+                MediaStore.Audio.Artists.Albums.getContentUri("external", artistId),
                 ALBUM_FIELDS_PROJECTION,
                 null,
                 null,

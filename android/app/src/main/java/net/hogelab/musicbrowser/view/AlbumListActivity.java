@@ -1,11 +1,16 @@
 package net.hogelab.musicbrowser.view;
 
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.ActivityAlbumListBinding;
+import net.hogelab.musicbrowser.model.AudioMediaStoreCursorLoaderFactory;
 import net.hogelab.musicbrowser.viewmodel.AlbumListRootViewModel;
 
 /**
@@ -15,15 +20,44 @@ public class AlbumListActivity extends AppCompatActivity {
     private static final String TAG = AlbumListActivity.class.getSimpleName();
 
 
+    private static final int ARTIST_LOADER_ID = 1;
+
+
     private ActivityAlbumListBinding mBinding;
+    private AlbumListRootViewModel mViewModel;
+
+
+    private final LoaderManager.LoaderCallbacks artistLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            final long artistId = args.getLong("artistId");
+
+            return AudioMediaStoreCursorLoaderFactory.createArtistCursorLoader(AlbumListActivity.this, artistId);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            if (data != null && data.moveToFirst()) {
+                mViewModel.setData(data);
+            }
+        }
+    };
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mViewModel = new AlbumListRootViewModel(this, null);
+
         mBinding = ActivityAlbumListBinding.inflate(getLayoutInflater());
-        mBinding.setViewModel(new AlbumListRootViewModel());
+        mBinding.setViewModel(mViewModel);
+
         setContentView(mBinding.getRoot());
 
         mBinding.toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
@@ -35,19 +69,25 @@ public class AlbumListActivity extends AppCompatActivity {
             }
         });
 
+        long artistId = 0;
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            artistId = extras.getLong("artistId");
+        }
+
+        Bundle args = new Bundle();
+        args.putLong("artistId", artistId);
+
         if (savedInstanceState == null) {
             AlbumListFragment fragment =  new AlbumListFragment();
-
-            Bundle extras = getIntent().getExtras();
-            if (extras != null) {
-                Bundle args = new Bundle();
-                args.putLong("artistId", extras.getLong("artistId"));
-                fragment.setArguments(args);
-            }
+            fragment.setArguments(args);
 
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.content_container, fragment)
                     .commit();
         }
+
+        getSupportLoaderManager().initLoader(ARTIST_LOADER_ID, args, artistLoaderCallback);
     }
 }

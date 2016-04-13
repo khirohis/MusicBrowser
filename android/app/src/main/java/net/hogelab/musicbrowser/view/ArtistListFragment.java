@@ -32,11 +32,11 @@ public class ArtistListFragment extends Fragment {
     private ArtistListAdapter mAdapter;
 
 
-    private final LoaderManager.LoaderCallbacks artistsLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
+    private final LoaderManager.LoaderCallbacks artistListLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            return AudioMediaStoreCursorLoaderFactory.createArtistsCursorLoader(getActivity());
+            return AudioMediaStoreCursorLoaderFactory.createArtistListCursorLoader(getActivity());
         }
 
         @Override
@@ -67,7 +67,7 @@ public class ArtistListFragment extends Fragment {
         mAdapter = new ArtistListAdapter(getActivity(), null);
         mBinding.artistList.setAdapter(mAdapter);
 
-        getLoaderManager().initLoader(ARTIST_LIST_LOADER_ID, null, artistsLoaderCallback);
+        getLoaderManager().initLoader(ARTIST_LIST_LOADER_ID, null, artistListLoaderCallback);
     }
 
     @Override

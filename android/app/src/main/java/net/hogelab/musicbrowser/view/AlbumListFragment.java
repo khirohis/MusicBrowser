@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,14 +33,13 @@ public class AlbumListFragment extends Fragment {
     private AlbumListAdapter mAdapter;
     private long mArtistId;
 
-
-    private final LoaderManager.LoaderCallbacks albumsLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
+    private final LoaderManager.LoaderCallbacks albumListLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             final long artistId = args.getLong("artistId");
 
-            return AudioMediaStoreCursorLoaderFactory.createAlbumsCursorLoader(getActivity(), artistId);
+            return AudioMediaStoreCursorLoaderFactory.createAlbumListCursorLoader(getActivity(), artistId);
         }
 
         @Override
@@ -82,7 +82,7 @@ public class AlbumListFragment extends Fragment {
 
         Bundle args = new Bundle();
         args.putLong("artistId", mArtistId);
-        getLoaderManager().initLoader(ALBUM_LIST_LOADER_ID, args, albumsLoaderCallback);
+        getLoaderManager().initLoader(ALBUM_LIST_LOADER_ID, args, albumListLoaderCallback);
     }
 
     @Override

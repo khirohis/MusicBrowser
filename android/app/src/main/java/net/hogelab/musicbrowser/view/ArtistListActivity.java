@@ -3,6 +3,7 @@ package net.hogelab.musicbrowser.view;
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.ActivityArtistListBinding;
 import net.hogelab.musicbrowser.viewmodel.ArtistListRootViewModel;
+
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
