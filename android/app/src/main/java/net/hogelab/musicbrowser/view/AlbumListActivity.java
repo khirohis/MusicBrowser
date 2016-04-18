@@ -1,5 +1,6 @@
 package net.hogelab.musicbrowser.view;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -8,8 +9,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.squareup.otto.Subscribe;
+
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.ActivityAlbumListBinding;
+import net.hogelab.musicbrowser.event.EventBus;
+import net.hogelab.musicbrowser.event.OpenAlbumEvent;
 import net.hogelab.musicbrowser.model.AudioMediaStoreCursorLoaderFactory;
 import net.hogelab.musicbrowser.viewmodel.AlbumListRootViewModel;
 
@@ -43,7 +48,7 @@ public class AlbumListActivity extends AppCompatActivity {
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
             if (data != null && data.moveToFirst()) {
-                mViewModel.setData(data);
+                mViewModel.setupFromCursor(data);
             }
         }
     };
@@ -89,5 +94,28 @@ public class AlbumListActivity extends AppCompatActivity {
         }
 
         getSupportLoaderManager().initLoader(ARTIST_LOADER_ID, args, artistLoaderCallback);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        EventBus.getBus().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getBus().unregister(this);
+
+        super.onPause();
+    }
+
+
+    @Subscribe
+    public void openAlbum(OpenAlbumEvent event) {
+        Intent intent = new Intent(this, TrackListActivity.class);
+        intent.putExtra("albumId", event.albumId);
+
+        startActivity(intent);
     }
 }

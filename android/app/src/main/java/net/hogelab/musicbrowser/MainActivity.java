@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == net.hogelab.musicbrowser.R.id.nav_mvvm) {
+        if (id == R.id.nav_artists) {
             Intent intent = new Intent(this, ArtistListActivity.class);
             startActivity(intent);
         }

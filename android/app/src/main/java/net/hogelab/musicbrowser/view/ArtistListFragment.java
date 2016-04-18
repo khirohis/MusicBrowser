@@ -71,32 +71,9 @@ public class ArtistListFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        EventBus.getBus().register(this);
-    }
-
-    @Override
-    public void onPause() {
-        EventBus.getBus().unregister(this);
-
-        super.onPause();
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
 
         getLoaderManager().destroyLoader(ARTIST_LIST_LOADER_ID);
-    }
-
-
-    @Subscribe
-    public void openArtist(OpenArtistEvent event) {
-        Intent intent = new Intent(getActivity(), AlbumListActivity.class);
-        intent.putExtra("artistId", event.artistId);
-
-        startActivity(intent);
     }
 }
