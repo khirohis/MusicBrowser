@@ -1,7 +1,11 @@
 package net.hogelab.musicbrowser;
 
 import android.content.Intent;
+
+import net.hogelab.musicbrowser.view.AlbumListActivity;
 import net.hogelab.musicbrowser.view.ArtistListActivity;
+import net.hogelab.musicbrowser.view.TrackListActivity;
+
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -66,8 +70,11 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_artists) {
-            Intent intent = new Intent(this, ArtistListActivity.class);
-            startActivity(intent);
+            startActivity(ArtistListActivity.newIntent(this));
+        } else if (id == R.id.nav_albums) {
+            startActivity(AlbumListActivity.newIntent(this));
+        } else if (id == R.id.nav_tracks) {
+            startActivity(TrackListActivity.newIntent(this));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(net.hogelab.musicbrowser.R.id.drawer_layout);

@@ -1,5 +1,6 @@
 package net.hogelab.musicbrowser.view;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -25,20 +26,38 @@ public class AlbumListActivity extends AppCompatActivity {
     private static final String TAG = AlbumListActivity.class.getSimpleName();
 
 
+    private static final String BUNDLE_ARTIST_ID_KEY = "artistId";
+
     private static final int ARTIST_LOADER_ID = 1;
 
 
     private ActivityAlbumListBinding mBinding;
     private AlbumListRootViewModel mViewModel;
+    private long mArtistId;
+
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, AlbumListActivity.class);
+    }
+
+    public static Intent newIntent(Context context, long artistId) {
+        Intent intent =  new Intent(context, AlbumListActivity.class);
+        intent.putExtra(BUNDLE_ARTIST_ID_KEY, artistId);
+
+        return intent;
+    }
 
 
     private final LoaderManager.LoaderCallbacks artistLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            final long artistId = args.getLong("artistId");
+            final long artistId = args.getLong(BUNDLE_ARTIST_ID_KEY);
+            if (artistId != 0L) {
+                return AudioMediaStoreCursorLoaderFactory.createArtistCursorLoader(AlbumListActivity.this, artistId);
+            }
 
-            return AudioMediaStoreCursorLoaderFactory.createArtistCursorLoader(AlbumListActivity.this, artistId);
+            return null;
         }
 
         @Override
@@ -74,25 +93,21 @@ public class AlbumListActivity extends AppCompatActivity {
             }
         });
 
-        long artistId = 0;
-
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            artistId = extras.getLong("artistId");
+            mArtistId = extras.getLong(BUNDLE_ARTIST_ID_KEY, 0L);
         }
 
-        Bundle args = new Bundle();
-        args.putLong("artistId", artistId);
-
         if (savedInstanceState == null) {
-            AlbumListFragment fragment =  new AlbumListFragment();
-            fragment.setArguments(args);
-
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.content_container, fragment)
+                    .add(R.id.content_container, AlbumListFragment.newInstance(mArtistId))
                     .commit();
         }
 
+        Bundle args = new Bundle();
+        if (mArtistId != 0L) {
+            args.putLong(BUNDLE_ARTIST_ID_KEY, mArtistId);
+        }
         getSupportLoaderManager().initLoader(ARTIST_LOADER_ID, args, artistLoaderCallback);
     }
 
@@ -113,9 +128,6 @@ public class AlbumListActivity extends AppCompatActivity {
 
     @Subscribe
     public void openAlbum(OpenAlbumEvent event) {
-        Intent intent = new Intent(this, TrackListActivity.class);
-        intent.putExtra("albumId", event.albumId);
-
-        startActivity(intent);
+        startActivity(TrackListActivity.newIntent(this, event.albumId));
     }
 }

@@ -31,7 +31,6 @@ public class ArtistListFragment extends Fragment {
     private FragmentArtistListBinding mBinding;
     private ArtistListAdapter mAdapter;
 
-
     private final LoaderManager.LoaderCallbacks artistListLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
 
         @Override
@@ -49,6 +48,11 @@ public class ArtistListFragment extends Fragment {
             mAdapter.swapCursor(data);
         }
     };
+
+
+    public static ArtistListFragment newInstance() {
+        return new ArtistListFragment();
+    }
 
 
     @Override

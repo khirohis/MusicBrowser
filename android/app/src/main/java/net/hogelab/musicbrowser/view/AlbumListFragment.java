@@ -26,6 +26,8 @@ public class AlbumListFragment extends Fragment {
     private static final String TAG = AlbumListFragment.class.getSimpleName();
 
 
+    private static final String BUNDLE_ARTIST_ID_KEY = "artistId";
+
     private static final int ALBUM_LIST_LOADER_ID = 1;
 
 
@@ -37,9 +39,12 @@ public class AlbumListFragment extends Fragment {
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            final long artistId = args.getLong("artistId");
-
-            return AudioMediaStoreCursorLoaderFactory.createAlbumListCursorLoader(getActivity(), artistId);
+            final long artistId = args.getLong(BUNDLE_ARTIST_ID_KEY);
+            if (artistId != 0L) {
+                return AudioMediaStoreCursorLoaderFactory.createAlbumListCursorLoader(getActivity(), artistId);
+            } else {
+                return AudioMediaStoreCursorLoaderFactory.createAlbumListCursorLoader(getActivity());
+            }
         }
 
         @Override
@@ -54,13 +59,26 @@ public class AlbumListFragment extends Fragment {
     };
 
 
+    public static AlbumListFragment newInstance(long artistId) {
+        AlbumListFragment fragment = new AlbumListFragment();
+
+        Bundle args = new Bundle();
+        if (artistId != 0) {
+            args.putLong(BUNDLE_ARTIST_ID_KEY, artistId);
+        }
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Bundle args = getArguments();
         if (args != null) {
-            mArtistId = args.getLong("artistId");
+            mArtistId = args.getLong(BUNDLE_ARTIST_ID_KEY, 0L);
         }
     }
 
@@ -81,7 +99,9 @@ public class AlbumListFragment extends Fragment {
         mBinding.albumList.setAdapter(mAdapter);
 
         Bundle args = new Bundle();
-        args.putLong("artistId", mArtistId);
+        if (mArtistId != 0L) {
+            args.putLong(BUNDLE_ARTIST_ID_KEY, mArtistId);
+        }
         getLoaderManager().initLoader(ALBUM_LIST_LOADER_ID, args, albumListLoaderCallback);
     }
 

@@ -20,6 +20,8 @@ public class TrackListFragment extends Fragment {
     private static final String TAG = TrackListFragment.class.getSimpleName();
 
 
+    private static final String BUNDLE_ALBUM_ID_KEY = "albumId";
+
     private static final int TRACK_LIST_LOADER_ID = 1;
 
 
@@ -31,9 +33,12 @@ public class TrackListFragment extends Fragment {
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            final long albumId = args.getLong("albumId");
-
-            return AudioMediaStoreCursorLoaderFactory.createTrackListCursorLoader(getActivity(), albumId);
+            final long albumId = args.getLong(BUNDLE_ALBUM_ID_KEY);
+            if (albumId != 0L) {
+                return AudioMediaStoreCursorLoaderFactory.createTrackListCursorLoader(getActivity(), albumId);
+            } else {
+                return AudioMediaStoreCursorLoaderFactory.createTrackListCursorLoader(getActivity());
+            }
         }
 
         @Override
@@ -48,13 +53,26 @@ public class TrackListFragment extends Fragment {
     };
 
 
+    public static TrackListFragment newInstance(long albumId) {
+        TrackListFragment fragment = new TrackListFragment();
+
+        Bundle args = new Bundle();
+        if (albumId != 0) {
+            args.putLong(BUNDLE_ALBUM_ID_KEY, albumId);
+        }
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Bundle args = getArguments();
         if (args != null) {
-            mAlbumId = args.getLong("albumId");
+            mAlbumId = args.getLong(BUNDLE_ALBUM_ID_KEY);
         }
     }
 
@@ -75,7 +93,9 @@ public class TrackListFragment extends Fragment {
         mBinding.trackList.setAdapter(mAdapter);
 
         Bundle args = new Bundle();
-        args.putLong("albumId", mAlbumId);
+        if (mAlbumId != 0L) {
+            args.putLong(BUNDLE_ALBUM_ID_KEY, mAlbumId);
+        }
         getLoaderManager().initLoader(TRACK_LIST_LOADER_ID, args, trackListLoaderCallback);
     }
 
