@@ -3,13 +3,17 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_traditional"
+            android:id="@+id/nav_artists"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Traditional" />
+            android:title="Artists" />
         <item
-            android:id="@+id/nav_mvvm"
+            android:id="@+id/nav_albums"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="MVVM" />
+            android:title="Albums" />
+        <item
+            android:id="@+id/nav_tracks"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Tracks" />
     </group>
 
 </menu>

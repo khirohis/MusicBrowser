@@ -86,32 +86,9 @@ public class AlbumListFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        EventBus.getBus().register(this);
-    }
-
-    @Override
-    public void onPause() {
-        EventBus.getBus().unregister(this);
-
-        super.onPause();
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
 
         getLoaderManager().destroyLoader(ALBUM_LIST_LOADER_ID);
-    }
-
-
-    @Subscribe
-    public void openAlbum(OpenAlbumEvent event) {
-        Intent intent = new Intent(getActivity(), TrackListActivity.class);
-        intent.putExtra("albumId", event.albumId);
-
-        startActivity(intent);
     }
 }

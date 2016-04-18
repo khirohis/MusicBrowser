@@ -6,6 +6,10 @@
 
     <string name="action_settings">Settings</string>
 
+    <string name="artist_list_title">Artists</string>
+    <string name="album_list_title">Albums</string>
+    <string name="track_list_title">Tracks</string>
+
     <string name="info_app">従来スタイルから Android Data Binding を利用した MVVM パターンへ移行したサンプル</string>
 
 </resources>

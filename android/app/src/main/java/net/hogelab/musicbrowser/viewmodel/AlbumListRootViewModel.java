@@ -16,35 +16,35 @@ public class AlbumListRootViewModel extends BaseObservable {
 
     private Context context;
 
-    private long artistId;
+    private long id;
     private String artist;
-    private String numberOfAlbums;
-    private String numberOfTracks;
+    private int numberOfAlbums;
+    private int numberOfTracks;
 
 
     public AlbumListRootViewModel(Context context, Cursor cursor) {
         this.context = context;
 
-        setData(cursor);
+        setupFromCursor(cursor);
     }
 
 
-    public void setData(Cursor cursor) {
+    public void setupFromCursor(Cursor cursor) {
         if (cursor != null) {
-            setArtistId(Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID))));
+            setId(Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID))));
             setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST)));
-            setNumberOfAlbums(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS)));
-            setNumberOfTracks(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS)));
+            setNumberOfAlbums(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS))));
+            setNumberOfTracks(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS))));
         }
     }
 
 
-    public long getArtistId() {
-        return artistId;
+    public long getId() {
+        return id;
     }
 
-    public void setArtistId(long artistId) {
-        this.artistId = artistId;
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Bindable
@@ -58,21 +58,21 @@ public class AlbumListRootViewModel extends BaseObservable {
     }
 
     @Bindable
-    public String getNumberOfAlbums() {
+    public int getNumberOfAlbums() {
         return numberOfAlbums;
     }
 
-    public void setNumberOfAlbums(String numberOfAlbums) {
+    public void setNumberOfAlbums(int numberOfAlbums) {
         this.numberOfAlbums = numberOfAlbums;
         notifyPropertyChanged(BR.numberOfAlbums);
     }
 
     @Bindable
-    public String getNumberOfTracks() {
+    public int getNumberOfTracks() {
         return numberOfTracks;
     }
 
-    public void setNumberOfTracks(String numberOfTracks) {
+    public void setNumberOfTracks(int numberOfTracks) {
         this.numberOfTracks = numberOfTracks;
         notifyPropertyChanged(BR.numberOfTracks);
     }

@@ -4,11 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <import type="net.hogelab.musicbrowser.viewmodel.AlbumListItemViewModel" />
+        <import type="net.hogelab.musicbrowser.viewmodel.TrackListItemViewModel" />
 
         <variable
             name="viewModel"
-            type="AlbumListItemViewModel" />
+            type="TrackListItemViewModel" />
     </data>
 
     <RelativeLayout
@@ -27,8 +27,7 @@
             android:layout_centerVertical="true"
             android:background="#888888"
             android:scaleType="fitCenter"
-            android:src="@{viewModel.defaultDrawable}"
-            app:imageUrl="@{viewModel.thumbnailUrl}" />
+            android:src="@{viewModel.defaultDrawable}" />
 
         <TextView
             android:id="@+id/title"
@@ -37,7 +36,7 @@
             android:paddingLeft="72dp"
             android:textColor="?android:attr/textColor"
             android:textSize="@dimen/font_normal"
-            android:text="@{viewModel.album}" />
+            android:text="@{viewModel.title}" />
 
         <TextView
             android:id="@+id/description"
@@ -47,7 +46,7 @@
             android:paddingLeft="72dp"
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="@dimen/font_small"
-            android:text="@{viewModel.artist}" />
+            android:text='@{viewModel.album + " - " + viewModel.artist}' />
 
     </RelativeLayout>
 

@@ -21,7 +21,9 @@
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fitsSystemWindows="true">
+            android:fitsSystemWindows="true"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            >
 
             <android.support.design.widget.CollapsingToolbarLayout
                 android:id="@+id/toolbar_layout"
@@ -37,6 +39,8 @@
                     android:layout_height="240dp"
                     android:gravity="center_vertical|center_horizontal"
                     android:background="?attr/colorPrimary"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/font_large"
                     android:fitsSystemWindows="true"
                     android:text='@{viewModel.artist != null ? viewModel.artist + "\n\n" + viewModel.numberOfAlbums + " albums : " + viewModel.numberOfTracks + " tracks" : ""}'
                     app:layout_collapseMode="parallax" />
@@ -46,6 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:background="?attr/colorPrimary"
+                    app:title="@string/album_list_title"
                     app:layout_collapseMode="pin" />
 
             </android.support.design.widget.CollapsingToolbarLayout>

@@ -7,6 +7,6 @@ public class ArtistListRootViewModel {
 
     public String getContentInfo() {
         // 普通はこんなことしないけどサンプルってことで
-        return "Artist List";
+        return "Your Library";
     }
 }

@@ -2,19 +2,18 @@ package net.hogelab.musicbrowser.viewmodel;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 import android.provider.MediaStore;
-import android.util.Log;
-import android.view.View;
 
+import net.hogelab.musicbrowser.BR;
 import net.hogelab.musicbrowser.R;
-import net.hogelab.musicbrowser.event.EventBus;
-import net.hogelab.musicbrowser.event.OpenAlbumEvent;
 
 /**
- * Created by kobayasi on 2016/04/11.
+ * Created by kobayasi on 2016/04/18.
  */
-public class AlbumListItemViewModel {
-    private static final String TAG = AlbumListItemViewModel.class.getSimpleName();
+public class TrackListRootViewModel extends BaseObservable {
+    private static final String TAG = AlbumListRootViewModel.class.getSimpleName();
 
     private Context context;
 
@@ -24,7 +23,7 @@ public class AlbumListItemViewModel {
     private String albumArt;
 
 
-    public AlbumListItemViewModel(Context context, Cursor cursor) {
+    public TrackListRootViewModel(Context context, Cursor cursor) {
         this.context = context;
 
         setupFromCursor(cursor);
@@ -49,48 +48,43 @@ public class AlbumListItemViewModel {
         this.id = id;
     }
 
+    @Bindable
     public String getAlbum() {
         return album;
     }
 
     public void setAlbum(String album) {
         this.album = album;
+        notifyPropertyChanged(BR.album);
     }
 
+    @Bindable
     public String getArtist() {
         return artist;
     }
 
     public void setArtist(String artist) {
         this.artist = artist;
+        notifyPropertyChanged(BR.artist);
     }
 
+    @Bindable
     public String getAlbumArt() {
         return albumArt;
     }
 
     public void setAlbumArt(String albumArt) {
         this.albumArt = albumArt;
+        notifyPropertyChanged(BR.albumArt);
+        notifyPropertyChanged(BR.thumbnailUrl);
     }
 
+    @Bindable
     public String getThumbnailUrl() {
         return "file://" + albumArt;
     }
 
     public int getDefaultDrawable() {
         return R.drawable.media_music;
-    }
-
-
-    public View.OnClickListener onClickListItem() {
-        return new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: " + album);
-
-                EventBus.postMainLooper(new OpenAlbumEvent(id));
-            }
-        };
     }
 }

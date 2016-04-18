@@ -18,39 +18,59 @@ public class ArtistListItemViewModel {
 
     private Context context;
 
-    private long artistId;
+    private long id;
     private String artist;
-    private String numberOfAlbums;
-    private String numberOfTracks;
+    private int numberOfAlbums;
+    private int numberOfTracks;
 
 
     public ArtistListItemViewModel(Context context, Cursor cursor) {
         this.context = context;
 
-        setData(cursor);
+        setupFromCursor(cursor);
     }
 
 
-    public void setData(Cursor cursor) {
+    public void setupFromCursor(Cursor cursor) {
         if (cursor != null) {
-            artistId = Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID)));
-            artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST));
-            numberOfAlbums = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS));
-            numberOfTracks = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS));
+            setId(Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID))));
+            setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST)));
+            setNumberOfAlbums(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS))));
+            setNumberOfTracks(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS))));
         }
     }
 
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getArtist() {
         return artist;
     }
 
-    public String getNumberOfAlbums() {
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
+
+    public int getNumberOfAlbums() {
         return numberOfAlbums;
     }
 
-    public String getNumberOfTracks() {
+    public void setNumberOfAlbums(int numberOfAlbums) {
+        this.numberOfAlbums = numberOfAlbums;
+    }
+
+    public int getNumberOfTracks() {
         return numberOfTracks;
+    }
+
+    public void setNumberOfTracks(int numberOfTracks) {
+        this.numberOfTracks = numberOfTracks;
     }
 
     public int getDefaultDrawable() {
@@ -64,7 +84,7 @@ public class ArtistListItemViewModel {
             public void onClick(View v) {
                 Log.d(TAG, "onClick: " + artist);
 
-                EventBus.postMainLooper(new OpenArtistEvent(artistId));
+                EventBus.postMainLooper(new OpenArtistEvent(id));
             }
         };
     }
