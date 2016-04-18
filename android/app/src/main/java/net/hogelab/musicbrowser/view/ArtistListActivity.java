@@ -6,6 +6,7 @@ import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenArtistEvent;
 import net.hogelab.musicbrowser.viewmodel.ArtistListRootViewModel;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -22,6 +23,11 @@ public class ArtistListActivity extends AppCompatActivity {
 
 
     private ActivityArtistListBinding mBinding;
+
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, ArtistListActivity.class);
+    }
 
 
     @Override
@@ -43,7 +49,7 @@ public class ArtistListActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.content_container, new ArtistListFragment())
+                    .add(R.id.content_container, ArtistListFragment.newInstance())
                     .commit();
         }
     }
@@ -66,9 +72,6 @@ public class ArtistListActivity extends AppCompatActivity {
 
     @Subscribe
     public void openArtist(OpenArtistEvent event) {
-        Intent intent = new Intent(this, AlbumListActivity.class);
-        intent.putExtra("artistId", event.artistId);
-
-        startActivity(intent);
+        startActivity(AlbumListActivity.newIntent(this, event.artistId));
     }
 }

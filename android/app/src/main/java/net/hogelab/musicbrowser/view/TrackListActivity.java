@@ -1,5 +1,7 @@
 package net.hogelab.musicbrowser.view;
 
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -24,18 +26,33 @@ public class TrackListActivity extends AppCompatActivity {
     private static final String TAG = TrackListActivity.class.getSimpleName();
 
 
+    private static final String BUNDLE_ALBUM_ID_KEY = "albumId";
+
     private static final int ALBUM_LOADER_ID = 1;
 
 
     private ActivityTrackListBinding mBinding;
     private TrackListRootViewModel mViewModel;
+    private long mAlbumId;
+
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, TrackListActivity.class);
+    }
+
+    public static Intent newIntent(Context context, long albumId) {
+        Intent intent =  new Intent(context, TrackListActivity.class);
+        intent.putExtra(BUNDLE_ALBUM_ID_KEY, albumId);
+
+        return intent;
+    }
 
 
     private final LoaderManager.LoaderCallbacks albumLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            final long albumId = args.getLong("albumId");
+            final long albumId = args.getLong(BUNDLE_ALBUM_ID_KEY);
 
             return AudioMediaStoreCursorLoaderFactory.createAlbumCursorLoader(TrackListActivity.this, albumId);
         }
@@ -73,25 +90,21 @@ public class TrackListActivity extends AppCompatActivity {
             }
         });
 
-        long albumId = 0;
-
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            albumId = extras.getLong("albumId");
+            mAlbumId = extras.getLong(BUNDLE_ALBUM_ID_KEY);
         }
 
-        Bundle args = new Bundle();
-        args.putLong("albumId", albumId);
-
         if (savedInstanceState == null) {
-            TrackListFragment fragment =  new TrackListFragment();
-            fragment.setArguments(args);
-
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.content_container, fragment)
+                    .add(R.id.content_container, TrackListFragment.newInstance(mAlbumId))
                     .commit();
         }
 
+        Bundle args = new Bundle();
+        if (mAlbumId != 0L) {
+            args.putLong(BUNDLE_ALBUM_ID_KEY, mAlbumId);
+        }
         getSupportLoaderManager().initLoader(ALBUM_LOADER_ID, args, albumLoaderCallback);
     }
 
