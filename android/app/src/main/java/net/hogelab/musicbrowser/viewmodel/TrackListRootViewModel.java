@@ -76,11 +76,11 @@ public class TrackListRootViewModel extends BaseObservable {
     public void setAlbumArt(String albumArt) {
         this.albumArt = albumArt;
         notifyPropertyChanged(BR.albumArt);
-        notifyPropertyChanged(BR.thumbnailUrl);
+        notifyPropertyChanged(BR.albumArtUrl);
     }
 
     @Bindable
-    public String getThumbnailUrl() {
+    public String getAlbumArtUrl() {
         return "file://" + albumArt;
     }
 
