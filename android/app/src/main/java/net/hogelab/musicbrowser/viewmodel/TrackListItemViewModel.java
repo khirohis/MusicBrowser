@@ -12,7 +12,7 @@ import net.hogelab.musicbrowser.R;
  * Created by kobayasi on 2016/04/18.
  */
 public class TrackListItemViewModel {
-    private static final String TAG = AlbumListItemViewModel.class.getSimpleName();
+    private static final String TAG = TrackListItemViewModel.class.getSimpleName();
 
     private Context context;
 

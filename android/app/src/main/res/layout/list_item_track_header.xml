@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="net.hogelab.musicbrowser.viewmodel.TrackListHeaderViewModel" />
+
+        <variable
+            name="viewModel"
+            type="TrackListHeaderViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?android:attr/textColor"
+            android:textSize="@dimen/font_large"
+            android:text="@{viewModel.title}" />
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="@dimen/font_normal"
+            android:text='@{viewModel.artist}' />
+
+        <TextView
+            android:id="@+id/description2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/description"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="@dimen/font_normal"
+            android:text='@{viewModel.album}' />
+
+    </RelativeLayout>
+
+</layout>
