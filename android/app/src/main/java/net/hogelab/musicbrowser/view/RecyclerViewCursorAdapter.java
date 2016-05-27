@@ -49,8 +49,8 @@ public abstract class RecyclerViewCursorAdapter extends RecyclerView.Adapter<Rec
 
 
     @Override
-    public BindingHolder onCreateViewHolder(ViewGroup viewGroup, int layoutId) {
-        ViewDataBinding dataBinding = DataBindingUtil.inflate(mInflater, layoutId, viewGroup, false);
+    public BindingHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        ViewDataBinding dataBinding = DataBindingUtil.inflate(mInflater, viewType, viewGroup, false);
         return new BindingHolder(dataBinding);
     }
 
@@ -73,7 +73,7 @@ public abstract class RecyclerViewCursorAdapter extends RecyclerView.Adapter<Rec
 
 
     public static class BindingHolder extends RecyclerView.ViewHolder {
-        private ViewDataBinding dataBinding;
+        protected ViewDataBinding dataBinding;
 
         public BindingHolder(ViewDataBinding dataBinding) {
             super(dataBinding.getRoot());
