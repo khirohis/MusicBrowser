@@ -8,6 +8,7 @@ import android.view.View;
 
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenArtistEvent;
+import net.hogelab.musicbrowser.model.entity.Artist;
 
 
 /**
@@ -18,34 +19,27 @@ public class ArtistListItemViewModel {
 
     private Context context;
 
-    private long id;
+    private String id;
     private String artist;
     private int numberOfAlbums;
     private int numberOfTracks;
 
 
-    public ArtistListItemViewModel(Context context, Cursor cursor) {
+    public ArtistListItemViewModel(Context context, Artist listItem) {
         this.context = context;
 
-        setupFromCursor(cursor);
+        id = listItem.getId();
+        artist = listItem.getArtist();
+        numberOfAlbums = listItem.getNumberOfAlbums();
+        numberOfTracks = listItem.getNumberOfTracks();
     }
 
 
-    public void setupFromCursor(Cursor cursor) {
-        if (cursor != null) {
-            setId(Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID))));
-            setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST)));
-            setNumberOfAlbums(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS))));
-            setNumberOfTracks(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS))));
-        }
-    }
-
-
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

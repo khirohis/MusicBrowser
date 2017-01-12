@@ -16,12 +16,29 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    static boolean isInitialized;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!isInitialized) {
+            Realm.init(getApplicationContext());
+
+            // delete
+            RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
+            Realm.deleteRealm(realmConfig);
+
+            isInitialized = true;
+        }
+
         setContentView(net.hogelab.musicbrowser.R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(net.hogelab.musicbrowser.R.id.toolbar);
         setSupportActionBar(toolbar);

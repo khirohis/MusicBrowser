@@ -1,22 +1,21 @@
 package net.hogelab.musicbrowser.view;
 
-import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.squareup.otto.Subscribe;
-
 import net.hogelab.musicbrowser.databinding.FragmentArtistListBinding;
-import net.hogelab.musicbrowser.event.EventBus;
-import net.hogelab.musicbrowser.event.OpenArtistEvent;
-import net.hogelab.musicbrowser.model.AudioMediaStoreCursorLoaderFactory;
+import net.hogelab.musicbrowser.model.ArtistListLoader;
+import net.hogelab.musicbrowser.model.entity.ArtistList;
+import net.hogelab.musicbrowser.model.entity.wrapper.ArtistListWrapper;
 import net.hogelab.musicbrowser.viewmodel.ArtistListViewModel;
+
+import io.realm.Realm;
 
 /**
  * Created by kobayasi on 2016/04/01.
@@ -31,21 +30,26 @@ public class ArtistListFragment extends Fragment {
     private FragmentArtistListBinding mBinding;
     private ArtistListAdapter mAdapter;
 
-    private final LoaderManager.LoaderCallbacks artistListLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
+
+    private final LoaderManager.LoaderCallbacks artistListLoaderCallback = new LoaderManager.LoaderCallbacks<String>() {
 
         @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            return AudioMediaStoreCursorLoaderFactory.createArtistListCursorLoader(getActivity());
+        public Loader<String> onCreateLoader(int id, Bundle args) {
+            return new ArtistListLoader(getContext());
         }
 
         @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
-            mAdapter.swapCursor(null);
+        public void onLoaderReset(Loader<String> loader) {
+            mAdapter.swapListWrapper(null);
         }
 
         @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            mAdapter.swapCursor(data);
+        public void onLoadFinished(Loader<String> loader, String data) {
+            Realm realm = Realm.getDefaultInstance();
+            ArtistList list = realm.where(ArtistList.class).equalTo("id", data).findFirst();
+            if (list != null) {
+                mAdapter.swapListWrapper(new ArtistListWrapper(list));
+            }
         }
     };
 
