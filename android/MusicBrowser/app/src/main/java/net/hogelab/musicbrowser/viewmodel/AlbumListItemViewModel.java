@@ -9,6 +9,7 @@ import android.view.View;
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenAlbumEvent;
+import net.hogelab.musicbrowser.model.entity.Album;
 
 /**
  * Created by kobayasi on 2016/04/11.
@@ -18,34 +19,27 @@ public class AlbumListItemViewModel {
 
     private Context context;
 
-    private long id;
+    private String id;
     private String album;
     private String artist;
     private String albumArt;
 
 
-    public AlbumListItemViewModel(Context context, Cursor cursor) {
+    public AlbumListItemViewModel(Context context, Album listItem) {
         this.context = context;
 
-        setupFromCursor(cursor);
+        setId(listItem.getId());
+        setAlbum(listItem.getAlbum());
+        setArtist(listItem.getArtist());
+        setAlbumArt(listItem.getAlbumArt());
     }
 
 
-    public void setupFromCursor(Cursor cursor) {
-        if (cursor != null) {
-            setId(Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID))));
-            setAlbum(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM)));
-            setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST)));
-            setAlbumArt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART)));
-        }
-    }
-
-
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
