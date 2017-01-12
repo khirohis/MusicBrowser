@@ -16,6 +16,7 @@ import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.ActivityAlbumListBinding;
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenAlbumEvent;
+import net.hogelab.musicbrowser.model.ArtistLoader;
 import net.hogelab.musicbrowser.model.AudioMediaStoreCursorLoaderFactory;
 import net.hogelab.musicbrowser.viewmodel.AlbumListRootViewModel;
 
@@ -33,14 +34,14 @@ public class AlbumListActivity extends AppCompatActivity {
 
     private ActivityAlbumListBinding mBinding;
     private AlbumListRootViewModel mViewModel;
-    private long mArtistId;
+    private String mArtistId;
 
 
     public static Intent newIntent(Context context) {
         return new Intent(context, AlbumListActivity.class);
     }
 
-    public static Intent newIntent(Context context, long artistId) {
+    public static Intent newIntent(Context context, String artistId) {
         Intent intent =  new Intent(context, AlbumListActivity.class);
         intent.putExtra(BUNDLE_ARTIST_ID_KEY, artistId);
 
@@ -48,26 +49,26 @@ public class AlbumListActivity extends AppCompatActivity {
     }
 
 
-    private final LoaderManager.LoaderCallbacks artistLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
+    private final LoaderManager.LoaderCallbacks artistLoaderCallback = new LoaderManager.LoaderCallbacks<String>() {
 
         @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            final long artistId = args.getLong(BUNDLE_ARTIST_ID_KEY);
-            if (artistId != 0L) {
-                return AudioMediaStoreCursorLoaderFactory.createArtistCursorLoader(AlbumListActivity.this, artistId);
+        public Loader<String> onCreateLoader(int id, Bundle args) {
+            final String artistId = args.getString(BUNDLE_ARTIST_ID_KEY);
+            if (artistId != null) {
+                return new ArtistLoader(AlbumListActivity.this, artistId);
             }
 
             return null;
         }
 
         @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
+        public void onLoaderReset(Loader<String> loader) {
         }
 
         @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            if (data != null && data.moveToFirst()) {
-                mViewModel.setupFromCursor(data);
+        public void onLoadFinished(Loader<String> loader, String data) {
+            if (data != null) {
+                mViewModel.setupFromArtistId(data);
             }
         }
     };
@@ -95,7 +96,7 @@ public class AlbumListActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            mArtistId = extras.getLong(BUNDLE_ARTIST_ID_KEY, 0L);
+            mArtistId = extras.getString(BUNDLE_ARTIST_ID_KEY);
         }
 
         if (savedInstanceState == null) {
@@ -105,8 +106,8 @@ public class AlbumListActivity extends AppCompatActivity {
         }
 
         Bundle args = new Bundle();
-        if (mArtistId != 0L) {
-            args.putLong(BUNDLE_ARTIST_ID_KEY, mArtistId);
+        if (mArtistId != null) {
+            args.putString(BUNDLE_ARTIST_ID_KEY, mArtistId);
         }
         getSupportLoaderManager().initLoader(ARTIST_LOADER_ID, args, artistLoaderCallback);
     }

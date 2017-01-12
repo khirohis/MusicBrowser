@@ -33,15 +33,15 @@ public class AlbumListFragment extends Fragment {
 
     private FragmentAlbumListBinding mBinding;
     private AlbumListAdapter mAdapter;
-    private long mArtistId;
+    private String mArtistId;
 
     private final LoaderManager.LoaderCallbacks albumListLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            final long artistId = args.getLong(BUNDLE_ARTIST_ID_KEY);
-            if (artistId != 0L) {
-                return AudioMediaStoreCursorLoaderFactory.createAlbumListCursorLoader(getActivity(), artistId);
+            final String artistId = args.getString(BUNDLE_ARTIST_ID_KEY);
+            if (artistId != null) {
+                return AudioMediaStoreCursorLoaderFactory.createAlbumListCursorLoader(getActivity(), Long.parseLong(artistId));
             } else {
                 return AudioMediaStoreCursorLoaderFactory.createAlbumListCursorLoader(getActivity());
             }
@@ -59,12 +59,12 @@ public class AlbumListFragment extends Fragment {
     };
 
 
-    public static AlbumListFragment newInstance(long artistId) {
+    public static AlbumListFragment newInstance(String artistId) {
         AlbumListFragment fragment = new AlbumListFragment();
 
         Bundle args = new Bundle();
-        if (artistId != 0) {
-            args.putLong(BUNDLE_ARTIST_ID_KEY, artistId);
+        if (artistId != null) {
+            args.putString(BUNDLE_ARTIST_ID_KEY, artistId);
         }
         fragment.setArguments(args);
 
@@ -78,7 +78,7 @@ public class AlbumListFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            mArtistId = args.getLong(BUNDLE_ARTIST_ID_KEY, 0L);
+            mArtistId = args.getString(BUNDLE_ARTIST_ID_KEY);
         }
     }
 
@@ -99,8 +99,8 @@ public class AlbumListFragment extends Fragment {
         mBinding.albumList.setAdapter(mAdapter);
 
         Bundle args = new Bundle();
-        if (mArtistId != 0L) {
-            args.putLong(BUNDLE_ARTIST_ID_KEY, mArtistId);
+        if (mArtistId != null) {
+            args.putString(BUNDLE_ARTIST_ID_KEY, mArtistId);
         }
         getLoaderManager().initLoader(ALBUM_LIST_LOADER_ID, args, albumListLoaderCallback);
     }

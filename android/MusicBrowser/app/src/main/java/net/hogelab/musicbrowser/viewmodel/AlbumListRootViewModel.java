@@ -7,6 +7,9 @@ import android.databinding.Bindable;
 import android.provider.MediaStore;
 
 import net.hogelab.musicbrowser.BR;
+import net.hogelab.musicbrowser.model.entity.Artist;
+
+import io.realm.Realm;
 
 /**
  * Created by kobayasi on 2016/04/11.
@@ -16,34 +19,38 @@ public class AlbumListRootViewModel extends BaseObservable {
 
     private Context context;
 
-    private long id;
+    private String id;
     private String artist;
     private int numberOfAlbums;
     private int numberOfTracks;
 
 
-    public AlbumListRootViewModel(Context context, Cursor cursor) {
+    public AlbumListRootViewModel(Context context, String artistId) {
         this.context = context;
 
-        setupFromCursor(cursor);
+        setupFromArtistId(artistId);
     }
 
 
-    public void setupFromCursor(Cursor cursor) {
-        if (cursor != null) {
-            setId(Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID))));
-            setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST)));
-            setNumberOfAlbums(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS))));
-            setNumberOfTracks(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS))));
+    public void setupFromArtistId(String artistId) {
+        if (artistId != null) {
+            Realm realm = Realm.getDefaultInstance();
+            Artist artist = realm.where(Artist.class).equalTo("id", artistId).findFirst();
+            if (artist != null) {
+                setId(artist.getId());
+                setArtist(artist.getArtist());
+                setNumberOfAlbums(artist.getNumberOfAlbums());
+                setNumberOfTracks(artist.getNumberOfTracks());
+            }
         }
     }
 
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
