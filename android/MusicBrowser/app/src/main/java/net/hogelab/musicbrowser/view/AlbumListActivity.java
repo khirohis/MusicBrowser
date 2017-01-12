@@ -129,6 +129,6 @@ public class AlbumListActivity extends AppCompatActivity {
 
     @Subscribe
     public void openAlbum(OpenAlbumEvent event) {
-        startActivity(TrackListActivity.newIntent(this, event.albumId));
+        startActivity(TrackListActivity.newIntent(this, Long.parseLong(event.albumId)));
     }
 }

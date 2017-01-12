@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.UUID;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 /**
  * Created by kobayasi on 2017/01/11.
@@ -45,16 +44,16 @@ public class ArtistListLoader extends MediaStoreLoader {
 
             while (cursor.moveToNext()) {
                 String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID));
-                Artist artist = realm.where(Artist.class).equalTo("id", id).findFirst();
-                if (artist == null) {
-                    artist = realm.createObject(Artist.class, id);
+                Artist entity = realm.where(Artist.class).equalTo("id", id).findFirst();
+                if (entity == null) {
+                    entity = realm.createObject(Artist.class, id);
                 }
 
-                artist.setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST)));
-                artist.setNumberOfAlbums(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS))));
-                artist.setNumberOfTracks(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS))));
+                entity.setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST)));
+                entity.setNumberOfAlbums(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS))));
+                entity.setNumberOfTracks(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS))));
 
-                list.getEntities().add(artist);
+                list.getEntities().add(entity);
             }
 
             realm.commitTransaction();

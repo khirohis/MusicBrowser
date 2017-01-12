@@ -16,8 +16,13 @@ import com.squareup.otto.Subscribe;
 import net.hogelab.musicbrowser.databinding.FragmentAlbumListBinding;
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenAlbumEvent;
+import net.hogelab.musicbrowser.model.AlbumListLoader;
 import net.hogelab.musicbrowser.model.AudioMediaStoreCursorLoaderFactory;
+import net.hogelab.musicbrowser.model.entity.AlbumList;
+import net.hogelab.musicbrowser.model.entity.wrapper.AlbumListWrapper;
 import net.hogelab.musicbrowser.viewmodel.AlbumListViewModel;
+
+import io.realm.Realm;
 
 /**
  * Created by kobayasi on 2016/04/11.
@@ -35,26 +40,26 @@ public class AlbumListFragment extends Fragment {
     private AlbumListAdapter mAdapter;
     private String mArtistId;
 
-    private final LoaderManager.LoaderCallbacks albumListLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
+    private final LoaderManager.LoaderCallbacks albumListLoaderCallback = new LoaderManager.LoaderCallbacks<String>() {
 
         @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        public Loader<String> onCreateLoader(int id, Bundle args) {
             final String artistId = args.getString(BUNDLE_ARTIST_ID_KEY);
-            if (artistId != null) {
-                return AudioMediaStoreCursorLoaderFactory.createAlbumListCursorLoader(getActivity(), Long.parseLong(artistId));
-            } else {
-                return AudioMediaStoreCursorLoaderFactory.createAlbumListCursorLoader(getActivity());
+            return new AlbumListLoader(getContext(), artistId);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<String> loader) {
+            mAdapter.swapListWrapper(null);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<String> loader, String data) {
+            Realm realm = Realm.getDefaultInstance();
+            AlbumList list = realm.where(AlbumList.class).equalTo("id", data).findFirst();
+            if (list != null) {
+                mAdapter.swapListWrapper(new AlbumListWrapper(list));
             }
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
-            mAdapter.swapCursor(null);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            mAdapter.swapCursor(data);
         }
     };
 
