@@ -10,6 +10,6 @@
     <string name="album_list_title">Albums</string>
     <string name="track_list_title">Tracks</string>
 
-    <string name="info_app">従来スタイルから Android Data Binding を利用した MVVM パターンへ移行したサンプル</string>
+    <string name="info_app">従来スタイルから Android Data Binding を利用した MVVM パターンへ移行したサンプル\n・ContentProviderとViewの間にRealm DBを挟む修正をしたバージョン</string>
 
 </resources>
