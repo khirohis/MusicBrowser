@@ -16,6 +16,8 @@ import net.hogelab.musicbrowser.model.entity.wrapper.ArtistListWrapper;
 import net.hogelab.musicbrowser.viewmodel.ArtistListViewModel;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 
 /**
  * Created by kobayasi on 2016/04/01.
@@ -27,6 +29,7 @@ public class ArtistListFragment extends Fragment {
     private static final int ARTIST_LIST_LOADER_ID = 1;
 
 
+    private Realm mRealm;
     private FragmentArtistListBinding mBinding;
     private ArtistListAdapter mAdapter;
 
@@ -45,8 +48,7 @@ public class ArtistListFragment extends Fragment {
 
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
-            Realm realm = Realm.getDefaultInstance();
-            ArtistList list = realm.where(ArtistList.class).equalTo("id", data).findFirst();
+            ArtistList list = mRealm.where(ArtistList.class).equalTo("id", data).findFirst();
             if (list != null) {
                 mAdapter.swapListWrapper(new ArtistListWrapper(list));
             }
@@ -56,6 +58,14 @@ public class ArtistListFragment extends Fragment {
 
     public static ArtistListFragment newInstance() {
         return new ArtistListFragment();
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mRealm = Realm.getDefaultInstance();
     }
 
 
@@ -83,5 +93,14 @@ public class ArtistListFragment extends Fragment {
         super.onDestroyView();
 
         getLoaderManager().destroyLoader(ARTIST_LIST_LOADER_ID);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mRealm != null) {
+            mRealm.close();
+        }
+
+        super.onDestroy();
     }
 }

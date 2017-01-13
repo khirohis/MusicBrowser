@@ -17,7 +17,10 @@ import net.hogelab.musicbrowser.databinding.ActivityTrackListBinding;
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenTrackEvent;
 import net.hogelab.musicbrowser.model.AlbumLoader;
+import net.hogelab.musicbrowser.model.entity.Album;
 import net.hogelab.musicbrowser.viewmodel.TrackListRootViewModel;
+
+import io.realm.Realm;
 
 /**
  * Created by kobayasi on 2016/04/11.
@@ -31,6 +34,7 @@ public class TrackListActivity extends AppCompatActivity {
     private static final int ALBUM_LOADER_ID = 1;
 
 
+    private Realm mRealm;
     private ActivityTrackListBinding mBinding;
     private TrackListRootViewModel mViewModel;
     private String mAlbumId;
@@ -67,7 +71,8 @@ public class TrackListActivity extends AppCompatActivity {
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
             if (data != null) {
-                mViewModel.setupFromAlbumId(data);
+                Album album = mRealm.where(Album.class).equalTo("id", data).findFirst();
+                mViewModel.setupFromAlbum(album);
             }
         }
     };
@@ -76,6 +81,8 @@ public class TrackListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mRealm = Realm.getDefaultInstance();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getDecorView().setSystemUiVisibility(
@@ -128,6 +135,15 @@ public class TrackListActivity extends AppCompatActivity {
         EventBus.getBus().unregister(this);
 
         super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mRealm != null) {
+            mRealm.close();
+        }
+
+        super.onDestroy();
     }
 
 

@@ -3,24 +3,37 @@ package net.hogelab.musicbrowser.model;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 
+import io.realm.Realm;
+
 /**
  * Created by kobayasi on 2017/01/11.
  */
 
-public abstract class MediaStoreLoader extends AsyncTaskLoader<String> {
+public abstract class MediaStoreToRealmLoader extends AsyncTaskLoader<String> {
     protected String mData;
 
 
-    public MediaStoreLoader(Context context) {
+    public MediaStoreToRealmLoader(Context context) {
         super(context);
     }
 
-    protected abstract String loadData();
+    protected abstract String loadData(Realm realm);
 
 
     @Override
     public String loadInBackground() {
-        return loadData();
+        String result = null;
+
+        Realm realm = Realm.getDefaultInstance();
+        try {
+            realm.beginTransaction();
+            result = loadData(realm);
+            realm.commitTransaction();
+        } finally {
+            realm.close();
+        }
+
+        return result;
     }
 
     @Override

@@ -29,9 +29,11 @@ public class AlbumListFragment extends Fragment {
     private static final int ALBUM_LIST_LOADER_ID = 1;
 
 
+    private Realm mRealm;
     private FragmentAlbumListBinding mBinding;
     private AlbumListAdapter mAdapter;
     private String mArtistId;
+
 
     private final LoaderManager.LoaderCallbacks albumListLoaderCallback = new LoaderManager.LoaderCallbacks<String>() {
 
@@ -48,10 +50,11 @@ public class AlbumListFragment extends Fragment {
 
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
-            Realm realm = Realm.getDefaultInstance();
-            AlbumList list = realm.where(AlbumList.class).equalTo("id", data).findFirst();
-            if (list != null) {
-                mAdapter.swapListWrapper(new AlbumListWrapper(list));
+            if (mRealm != null) {
+                AlbumList list = mRealm.where(AlbumList.class).equalTo("id", data).findFirst();
+                if (list != null) {
+                    mAdapter.swapListWrapper(new AlbumListWrapper(list));
+                }
             }
         }
     };
@@ -73,6 +76,8 @@ public class AlbumListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mRealm = Realm.getDefaultInstance();
 
         Bundle args = getArguments();
         if (args != null) {
@@ -108,5 +113,14 @@ public class AlbumListFragment extends Fragment {
         super.onDestroyView();
 
         getLoaderManager().destroyLoader(ALBUM_LIST_LOADER_ID);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mRealm != null) {
+            mRealm.close();
+        }
+
+        super.onDestroy();
     }
 }

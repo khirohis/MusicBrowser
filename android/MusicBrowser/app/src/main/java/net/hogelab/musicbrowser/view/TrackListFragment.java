@@ -28,9 +28,11 @@ public class TrackListFragment extends Fragment {
     private static final int TRACK_LIST_LOADER_ID = 1;
 
 
+    private Realm mRealm;
     private FragmentTrackListBinding mBinding;
     private TrackListAdapter mAdapter;
     private String mAlbumId;
+
 
     private final LoaderManager.LoaderCallbacks trackListLoaderCallback = new LoaderManager.LoaderCallbacks<String>() {
 
@@ -47,8 +49,7 @@ public class TrackListFragment extends Fragment {
 
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
-            Realm realm = Realm.getDefaultInstance();
-            TrackList list = realm.where(TrackList.class).equalTo("id", data).findFirst();
+            TrackList list = mRealm.where(TrackList.class).equalTo("id", data).findFirst();
             if (list != null) {
                 mAdapter.swapListWrapper(new TrackListWrapper(list));
             }
@@ -72,6 +73,8 @@ public class TrackListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mRealm = Realm.getDefaultInstance();
 
         Bundle args = getArguments();
         if (args != null) {
@@ -107,5 +110,14 @@ public class TrackListFragment extends Fragment {
         super.onDestroyView();
 
         getLoaderManager().destroyLoader(TRACK_LIST_LOADER_ID);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mRealm != null) {
+            mRealm.close();
+        }
+
+        super.onDestroy();
     }
 }

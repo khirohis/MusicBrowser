@@ -7,8 +7,6 @@ import android.databinding.Bindable;
 import net.hogelab.musicbrowser.BR;
 import net.hogelab.musicbrowser.model.entity.Artist;
 
-import io.realm.Realm;
-
 /**
  * Created by kobayasi on 2016/04/11.
  */
@@ -23,23 +21,19 @@ public class AlbumListRootViewModel extends BaseObservable {
     private int numberOfTracks;
 
 
-    public AlbumListRootViewModel(Context context, String artistId) {
+    public AlbumListRootViewModel(Context context, Artist artist) {
         this.context = context;
 
-        setupFromArtistId(artistId);
+        setupFromArtist(artist);
     }
 
 
-    public void setupFromArtistId(String artistId) {
-        if (artistId != null) {
-            Realm realm = Realm.getDefaultInstance();
-            Artist artist = realm.where(Artist.class).equalTo("id", artistId).findFirst();
-            if (artist != null) {
-                setId(artist.getId());
-                setArtist(artist.getArtist());
-                setNumberOfAlbums(artist.getNumberOfAlbums());
-                setNumberOfTracks(artist.getNumberOfTracks());
-            }
+    public void setupFromArtist(Artist artist) {
+        if (artist != null) {
+            setId(artist.getId());
+            setArtist(artist.getArtist());
+            setNumberOfAlbums(artist.getNumberOfAlbums());
+            setNumberOfTracks(artist.getNumberOfTracks());
         }
     }
 
