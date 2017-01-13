@@ -1,7 +1,5 @@
 package net.hogelab.musicbrowser;
 
-import android.content.Intent;
-
 import net.hogelab.musicbrowser.view.AlbumListActivity;
 import net.hogelab.musicbrowser.view.ArtistListActivity;
 import net.hogelab.musicbrowser.view.TrackListActivity;

@@ -2,9 +2,6 @@ package net.hogelab.musicbrowser.model.entity.wrapper;
 
 import java.util.Date;
 
-import io.realm.RealmList;
-import io.realm.RealmObject;
-
 /**
  * Created by kobayasi on 2017/01/12.
  */

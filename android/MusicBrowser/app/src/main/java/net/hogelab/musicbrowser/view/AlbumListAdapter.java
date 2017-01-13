@@ -1,7 +1,6 @@
 package net.hogelab.musicbrowser.view;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.databinding.ViewDataBinding;
 
 import net.hogelab.musicbrowser.R;

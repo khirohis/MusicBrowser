@@ -2,7 +2,6 @@ package net.hogelab.musicbrowser.view;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -17,7 +16,7 @@ import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.ActivityTrackListBinding;
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenTrackEvent;
-import net.hogelab.musicbrowser.model.AudioMediaStoreCursorLoaderFactory;
+import net.hogelab.musicbrowser.model.AlbumLoader;
 import net.hogelab.musicbrowser.viewmodel.TrackListRootViewModel;
 
 /**
@@ -34,14 +33,14 @@ public class TrackListActivity extends AppCompatActivity {
 
     private ActivityTrackListBinding mBinding;
     private TrackListRootViewModel mViewModel;
-    private long mAlbumId;
+    private String mAlbumId;
 
 
     public static Intent newIntent(Context context) {
         return new Intent(context, TrackListActivity.class);
     }
 
-    public static Intent newIntent(Context context, long albumId) {
+    public static Intent newIntent(Context context, String albumId) {
         Intent intent =  new Intent(context, TrackListActivity.class);
         intent.putExtra(BUNDLE_ALBUM_ID_KEY, albumId);
 
@@ -49,23 +48,26 @@ public class TrackListActivity extends AppCompatActivity {
     }
 
 
-    private final LoaderManager.LoaderCallbacks albumLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
+    private final LoaderManager.LoaderCallbacks albumLoaderCallback = new LoaderManager.LoaderCallbacks<String>() {
 
         @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            final long albumId = args.getLong(BUNDLE_ALBUM_ID_KEY);
+        public Loader<String> onCreateLoader(int id, Bundle args) {
+            final String albumId = args.getString(BUNDLE_ALBUM_ID_KEY);
+            if (albumId != null) {
+                return new AlbumLoader(TrackListActivity.this, albumId);
+            }
 
-            return AudioMediaStoreCursorLoaderFactory.createAlbumCursorLoader(TrackListActivity.this, albumId);
+            return null;
         }
 
         @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
+        public void onLoaderReset(Loader<String> loader) {
         }
 
         @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            if (data != null && data.moveToFirst()) {
-                mViewModel.setupFromCursor(data);
+        public void onLoadFinished(Loader<String> loader, String data) {
+            if (data != null) {
+                mViewModel.setupFromAlbumId(data);
             }
         }
     };
@@ -98,7 +100,7 @@ public class TrackListActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            mAlbumId = extras.getLong(BUNDLE_ALBUM_ID_KEY);
+            mAlbumId = extras.getString(BUNDLE_ALBUM_ID_KEY);
         }
 
         if (savedInstanceState == null) {
@@ -108,8 +110,8 @@ public class TrackListActivity extends AppCompatActivity {
         }
 
         Bundle args = new Bundle();
-        if (mAlbumId != 0L) {
-            args.putLong(BUNDLE_ALBUM_ID_KEY, mAlbumId);
+        if (mAlbumId != null) {
+            args.putString(BUNDLE_ALBUM_ID_KEY, mAlbumId);
         }
         getSupportLoaderManager().initLoader(ALBUM_LOADER_ID, args, albumLoaderCallback);
     }

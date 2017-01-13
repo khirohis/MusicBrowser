@@ -29,7 +29,7 @@ public class ArtistListLoader extends MediaStoreLoader {
     protected String loadData() {
         Cursor cursor = getContext().getContentResolver().query(
                 MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
-                MediaStoreFieldsProjection.ARTISTS_FIELDS_PROJECTION,
+                MediaStoreFieldsProjection.ARTIST_FIELDS_PROJECTION,
                 null,
                 null,
                 MediaStore.Audio.Artists.DEFAULT_SORT_ORDER);

@@ -1,7 +1,5 @@
 package net.hogelab.musicbrowser.view;
 
-import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -11,13 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.squareup.otto.Subscribe;
-
 import net.hogelab.musicbrowser.databinding.FragmentAlbumListBinding;
-import net.hogelab.musicbrowser.event.EventBus;
-import net.hogelab.musicbrowser.event.OpenAlbumEvent;
 import net.hogelab.musicbrowser.model.AlbumListLoader;
-import net.hogelab.musicbrowser.model.AudioMediaStoreCursorLoaderFactory;
 import net.hogelab.musicbrowser.model.entity.AlbumList;
 import net.hogelab.musicbrowser.model.entity.wrapper.AlbumListWrapper;
 import net.hogelab.musicbrowser.viewmodel.AlbumListViewModel;

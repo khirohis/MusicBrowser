@@ -4,7 +4,6 @@ import android.content.Context;
 import android.databinding.BindingAdapter;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 /**

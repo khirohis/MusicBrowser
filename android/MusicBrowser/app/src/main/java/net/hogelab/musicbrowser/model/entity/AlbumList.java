@@ -15,7 +15,7 @@ public class AlbumList extends RealmObject {
     @PrimaryKey
     private String id;
 
-    private String artistId;
+    private String parentId;
     private Date creationDate;
     private RealmList<Album> entities;
 
@@ -27,12 +27,12 @@ public class AlbumList extends RealmObject {
         this.id = id;
     }
 
-    public String getArtistId() {
-        return artistId;
+    public String getParentId() {
+        return parentId;
     }
 
-    public void setArtistId(String artistId) {
-        this.artistId = artistId;
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     public Date getCreationDate() {

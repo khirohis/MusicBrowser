@@ -1,10 +1,8 @@
 package net.hogelab.musicbrowser.viewmodel;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-import android.provider.MediaStore;
 
 import net.hogelab.musicbrowser.BR;
 import net.hogelab.musicbrowser.model.entity.Artist;
