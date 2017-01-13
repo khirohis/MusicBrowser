@@ -12,7 +12,7 @@ import io.realm.Realm;
  * Created by kobayasi on 2017/01/13.
  */
 
-public class AlbumLoader extends MediaStoreLoader {
+public class AlbumLoader extends MediaStoreToRealmLoader {
     private String albumId;
 
     public AlbumLoader(Context context, String albumId) {
@@ -23,7 +23,7 @@ public class AlbumLoader extends MediaStoreLoader {
 
 
     @Override
-    protected String loadData() {
+    protected String loadData(Realm realm) {
         String selection = MediaStore.Audio.Albums._ID + "=?";
         String[] selectionArgs = new String[] { albumId };
 
@@ -36,9 +36,6 @@ public class AlbumLoader extends MediaStoreLoader {
 
         if (cursor != null) {
             if (cursor.moveToNext()) {
-                Realm realm = Realm.getDefaultInstance();
-                realm.beginTransaction();
-
                 String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID));
                 Album entity = realm.where(Album.class).equalTo("id", id).findFirst();
                 if (entity == null) {
@@ -48,8 +45,6 @@ public class AlbumLoader extends MediaStoreLoader {
                 entity.setAlbum(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM)));
                 entity.setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST)));
                 entity.setAlbumArt(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ART)));
-
-                realm.commitTransaction();
             }
 
             cursor.close();

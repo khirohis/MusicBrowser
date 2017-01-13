@@ -16,7 +16,7 @@ import io.realm.Realm;
  * Created by kobayasi on 2017/01/11.
  */
 
-public class ArtistListLoader extends MediaStoreLoader {
+public class ArtistListLoader extends MediaStoreToRealmLoader {
     private static final String TAG = ArtistListLoader.class.getSimpleName();
 
 
@@ -26,7 +26,7 @@ public class ArtistListLoader extends MediaStoreLoader {
 
 
     @Override
-    protected String loadData() {
+    protected String loadData(Realm realm) {
         Cursor cursor = getContext().getContentResolver().query(
                 MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
                 MediaStoreFieldsProjection.ARTIST_FIELDS_PROJECTION,
@@ -35,9 +35,6 @@ public class ArtistListLoader extends MediaStoreLoader {
                 MediaStore.Audio.Artists.DEFAULT_SORT_ORDER);
 
         if (cursor != null) {
-            Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
-
             String listId = UUID.randomUUID().toString();
             ArtistList list = realm.createObject(ArtistList.class, listId);
             list.setCreationDate(new Date());
@@ -55,8 +52,6 @@ public class ArtistListLoader extends MediaStoreLoader {
 
                 list.getEntities().add(entity);
             }
-
-            realm.commitTransaction();
 
             cursor.close();
 

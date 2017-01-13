@@ -8,8 +8,6 @@ import net.hogelab.musicbrowser.BR;
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.model.entity.Album;
 
-import io.realm.Realm;
-
 /**
  * Created by kobayasi on 2016/04/18.
  */
@@ -24,23 +22,19 @@ public class TrackListRootViewModel extends BaseObservable {
     private String albumArt;
 
 
-    public TrackListRootViewModel(Context context, String albumId) {
+    public TrackListRootViewModel(Context context, Album album) {
         this.context = context;
 
-        setupFromAlbumId(albumId);
+        setupFromAlbum(album);
     }
 
 
-    public void setupFromAlbumId(String albumId) {
-        if (albumId != null) {
-            Realm realm = Realm.getDefaultInstance();
-            Album album = realm.where(Album.class).equalTo("id", albumId).findFirst();
-            if (album != null) {
-                setId(album.getId());
-                setAlbum(album.getAlbum());
-                setArtist(album.getArtist());
-                setAlbumArt(album.getAlbumArt());
-            }
+    public void setupFromAlbum(Album album) {
+        if (album != null) {
+            setId(album.getId());
+            setAlbum(album.getAlbum());
+            setArtist(album.getArtist());
+            setAlbumArt(album.getAlbumArt());
         }
     }
 
