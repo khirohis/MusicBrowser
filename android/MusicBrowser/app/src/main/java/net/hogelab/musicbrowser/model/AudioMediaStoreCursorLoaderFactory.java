@@ -15,7 +15,7 @@ public final class AudioMediaStoreCursorLoaderFactory {
 
         return new CursorLoader(context,
                 MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
-                MediaStoreFieldsProjection.ARTISTS_FIELDS_PROJECTION,
+                MediaStoreFieldsProjection.ARTIST_FIELDS_PROJECTION,
                 selection,
                 selectionArgs,
                 MediaStore.Audio.Artists.DEFAULT_SORT_ORDER);
@@ -24,7 +24,7 @@ public final class AudioMediaStoreCursorLoaderFactory {
     public static final CursorLoader createArtistListCursorLoader(Context context) {
         return new CursorLoader(context,
                 MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
-                MediaStoreFieldsProjection.ARTISTS_FIELDS_PROJECTION,
+                MediaStoreFieldsProjection.ARTIST_FIELDS_PROJECTION,
                 null,
                 null,
                 MediaStore.Audio.Artists.DEFAULT_SORT_ORDER);

@@ -29,7 +29,7 @@ public class ArtistLoader extends MediaStoreLoader {
 
         Cursor cursor = getContext().getContentResolver().query(
                 MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
-                MediaStoreFieldsProjection.ARTISTS_FIELDS_PROJECTION,
+                MediaStoreFieldsProjection.ARTIST_FIELDS_PROJECTION,
                 selection,
                 selectionArgs,
                 MediaStore.Audio.Artists.DEFAULT_SORT_ORDER);
@@ -40,14 +40,14 @@ public class ArtistLoader extends MediaStoreLoader {
                 realm.beginTransaction();
 
                 String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID));
-                Artist artist = realm.where(Artist.class).equalTo("id", id).findFirst();
-                if (artist == null) {
-                    artist = realm.createObject(Artist.class, id);
+                Artist entity = realm.where(Artist.class).equalTo("id", id).findFirst();
+                if (entity == null) {
+                    entity = realm.createObject(Artist.class, id);
                 }
 
-                artist.setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST)));
-                artist.setNumberOfAlbums(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS))));
-                artist.setNumberOfTracks(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS))));
+                entity.setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST)));
+                entity.setNumberOfAlbums(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS))));
+                entity.setNumberOfTracks(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS))));
 
                 realm.commitTransaction();
             }

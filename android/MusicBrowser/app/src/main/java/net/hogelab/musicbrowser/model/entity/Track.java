@@ -16,10 +16,10 @@ public class Track extends RealmObject {
     private String title;
     private long duration;
 
-    private long artistId;
+    private String artistId;
     private String artist;
     private String composer;
-    private long albumId;
+    private String albumId;
     private String album;
     private int track;
 
@@ -56,11 +56,11 @@ public class Track extends RealmObject {
         this.duration = duration;
     }
 
-    public long getArtistId() {
+    public String getArtistId() {
         return artistId;
     }
 
-    public void setArtistId(long artistId) {
+    public void setArtistId(String artistId) {
         this.artistId = artistId;
     }
 
@@ -80,11 +80,11 @@ public class Track extends RealmObject {
         this.composer = composer;
     }
 
-    public long getAlbumId() {
+    public String getAlbumId() {
         return albumId;
     }
 
-    public void setAlbumId(long albumId) {
+    public void setAlbumId(String albumId) {
         this.albumId = albumId;
     }
 

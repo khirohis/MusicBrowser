@@ -47,9 +47,6 @@ public abstract class RecyclerViewListWrapperAdapter extends RecyclerView.Adapte
     }
 
 
-    public abstract void setupDataBinding(ViewDataBinding dataBinding, Object listItem, int position);
-
-
     @Override
     public int getItemViewType(int position) {
         return R.layout.list_item_artist;
@@ -77,6 +74,9 @@ public abstract class RecyclerViewListWrapperAdapter extends RecyclerView.Adapte
             return 0;
         }
     }
+
+
+    protected abstract void setupDataBinding(ViewDataBinding dataBinding, Object listItem, int position);
 
 
     public static class BindingHolder extends RecyclerView.ViewHolder {

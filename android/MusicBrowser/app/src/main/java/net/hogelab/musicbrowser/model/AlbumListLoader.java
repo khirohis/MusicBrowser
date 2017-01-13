@@ -18,7 +18,7 @@ import io.realm.Realm;
  */
 
 public class AlbumListLoader extends MediaStoreLoader {
-    private static final String TAG = ArtistListLoader.class.getSimpleName();
+    private static final String TAG = AlbumListLoader.class.getSimpleName();
 
     private final String mArtistId;
 
@@ -32,7 +32,7 @@ public class AlbumListLoader extends MediaStoreLoader {
 
     @Override
     protected String loadData() {
-        Uri uri;
+        Uri uri = null;
         if (mArtistId != null) {
             uri = MediaStore.Audio.Artists.Albums.getContentUri("external", Long.parseLong(mArtistId));
         } else {
@@ -53,7 +53,7 @@ public class AlbumListLoader extends MediaStoreLoader {
             String listId = UUID.randomUUID().toString();
             AlbumList list = realm.createObject(AlbumList.class, listId);
             list.setCreationDate(new Date());
-            list.setArtistId(mArtistId);
+            list.setParentId(mArtistId);
 
             while (cursor.moveToNext()) {
                 String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID));

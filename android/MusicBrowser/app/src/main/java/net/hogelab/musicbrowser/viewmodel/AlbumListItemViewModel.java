@@ -1,8 +1,6 @@
 package net.hogelab.musicbrowser.viewmodel;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 

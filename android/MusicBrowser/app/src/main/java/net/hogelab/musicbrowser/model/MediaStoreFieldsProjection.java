@@ -8,7 +8,7 @@ import android.provider.MediaStore;
 
 public class MediaStoreFieldsProjection {
 
-    public static final String[] ARTISTS_FIELDS_PROJECTION = {
+    public static final String[] ARTIST_FIELDS_PROJECTION = {
             MediaStore.Audio.Artists._ID,
             MediaStore.Audio.Artists.ARTIST,
             MediaStore.Audio.Artists.NUMBER_OF_ALBUMS,

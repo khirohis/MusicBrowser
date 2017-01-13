@@ -2,7 +2,6 @@ package net.hogelab.musicbrowser.view;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -17,7 +16,6 @@ import net.hogelab.musicbrowser.databinding.ActivityAlbumListBinding;
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenAlbumEvent;
 import net.hogelab.musicbrowser.model.ArtistLoader;
-import net.hogelab.musicbrowser.model.AudioMediaStoreCursorLoaderFactory;
 import net.hogelab.musicbrowser.viewmodel.AlbumListRootViewModel;
 
 /**
@@ -129,6 +127,6 @@ public class AlbumListActivity extends AppCompatActivity {
 
     @Subscribe
     public void openAlbum(OpenAlbumEvent event) {
-        startActivity(TrackListActivity.newIntent(this, Long.parseLong(event.albumId)));
+        startActivity(TrackListActivity.newIntent(this, event.albumId));
     }
 }

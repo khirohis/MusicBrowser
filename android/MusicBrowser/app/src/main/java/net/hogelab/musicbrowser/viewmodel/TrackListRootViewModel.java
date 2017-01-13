@@ -1,13 +1,14 @@
 package net.hogelab.musicbrowser.viewmodel;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-import android.provider.MediaStore;
 
 import net.hogelab.musicbrowser.BR;
 import net.hogelab.musicbrowser.R;
+import net.hogelab.musicbrowser.model.entity.Album;
+
+import io.realm.Realm;
 
 /**
  * Created by kobayasi on 2016/04/18.
@@ -17,34 +18,38 @@ public class TrackListRootViewModel extends BaseObservable {
 
     private Context context;
 
-    private long id;
+    private String id;
     private String album;
     private String artist;
     private String albumArt;
 
 
-    public TrackListRootViewModel(Context context, Cursor cursor) {
+    public TrackListRootViewModel(Context context, String albumId) {
         this.context = context;
 
-        setupFromCursor(cursor);
+        setupFromAlbumId(albumId);
     }
 
 
-    public void setupFromCursor(Cursor cursor) {
-        if (cursor != null) {
-            setId(Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID))));
-            setAlbum(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM)));
-            setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST)));
-            setAlbumArt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART)));
+    public void setupFromAlbumId(String albumId) {
+        if (albumId != null) {
+            Realm realm = Realm.getDefaultInstance();
+            Album album = realm.where(Album.class).equalTo("id", albumId).findFirst();
+            if (album != null) {
+                setId(album.getId());
+                setAlbum(album.getAlbum());
+                setArtist(album.getArtist());
+                setAlbumArt(album.getAlbumArt());
+            }
         }
     }
 
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
