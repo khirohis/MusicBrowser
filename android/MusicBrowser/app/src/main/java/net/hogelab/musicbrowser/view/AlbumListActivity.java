@@ -19,6 +19,7 @@ import net.hogelab.musicbrowser.model.entity.ArtistEntity;
 import net.hogelab.musicbrowser.viewmodel.AlbumListRootViewModel;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 
 /**
  * Created by kobayasi on 2016/04/11.
@@ -33,9 +34,21 @@ public class AlbumListActivity extends AppCompatActivity {
 
 
     private Realm mRealm;
+
     private ActivityAlbumListBinding mBinding;
     private AlbumListRootViewModel mViewModel;
+
     private String mArtistId;
+    private ArtistEntity mArtist;
+    private final RealmChangeListener<ArtistEntity> mChangeListener = new RealmChangeListener<ArtistEntity>() {
+
+        @Override
+        public void onChange(ArtistEntity element) {
+            if (element.isValid() && element.isLoaded()) {
+                mViewModel.setupFromArtist(element);
+            }
+        }
+    };
 
 
     public static Intent newIntent(Context context) {
@@ -73,10 +86,6 @@ public class AlbumListActivity extends AppCompatActivity {
 
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
-            if (data != null) {
-                ArtistEntity artist = mRealm.where(ArtistEntity.class).equalTo("id", data).findFirst();
-                mViewModel.setupFromArtist(artist);
-            }
         }
     };
 
@@ -126,10 +135,12 @@ public class AlbumListActivity extends AppCompatActivity {
         super.onResume();
 
         EventBus.getBus().register(this);
+        addChangeListener(mArtistId);
     }
 
     @Override
     public void onPause() {
+        removeChangeListener();
         EventBus.getBus().unregister(this);
 
         super.onPause();
@@ -149,5 +160,22 @@ public class AlbumListActivity extends AppCompatActivity {
     @Subscribe
     public void openAlbum(OpenAlbumEvent event) {
         startActivity(TrackListActivity.newIntent(this, event.albumId));
+    }
+
+
+    private void addChangeListener(String id) {
+        removeChangeListener();
+
+        if (mRealm != null && mArtistId != null) {
+            mArtist = mRealm.where(ArtistEntity.class).equalTo("id", id).findFirstAsync();
+            mArtist.addChangeListener(mChangeListener);
+        }
+    }
+
+    private void removeChangeListener() {
+        if (mArtist != null) {
+            mArtist.removeChangeListener(mChangeListener);
+            mArtist = null;
+        }
     }
 }
