@@ -57,7 +57,7 @@ public class ArtistListFragment extends Fragment {
 
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
-            // もはや Loader である必要はない
+            // ロードを待って表示したい場合はココで addChangeListener()
         }
     };
 
@@ -100,7 +100,7 @@ public class ArtistListFragment extends Fragment {
             ArtistListActivity activity = (ArtistListActivity) getActivity();
             mRealm = activity.getRealm();
 
-            // ビュー表示即保存済のリスト表示をする
+            // Loader のロードを待たずに保存済のリスト表示をする場合ココで
             addChangeListener();
         } catch (ClassCastException e) {
         }

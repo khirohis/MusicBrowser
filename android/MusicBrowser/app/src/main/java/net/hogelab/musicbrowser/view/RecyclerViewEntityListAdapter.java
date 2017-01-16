@@ -66,7 +66,7 @@ public abstract class RecyclerViewEntityListAdapter extends RecyclerView.Adapter
     @Override
     public void onBindViewHolder(RecyclerViewEntityListAdapter.BindingHolder viewHolder, int position) {
         if (mList != null) {
-            EntityHolder holder = mList.getEntities().get(position);
+            EntityHolder holder = mList.getHolder(position);
             if (holder != null && holder.isKind(EntityHolder.EntityKind.ARTIST)) {
                 Object listItem =holder.getArtist();
                 setupDataBinding(viewHolder.dataBinding, listItem, position);
@@ -77,7 +77,7 @@ public abstract class RecyclerViewEntityListAdapter extends RecyclerView.Adapter
     @Override
     public int getItemCount() {
         if (mList != null) {
-            return mList.getEntities().size();
+            return mList.size();
         } else {
             return 0;
         }
