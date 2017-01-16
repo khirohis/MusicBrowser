@@ -40,7 +40,7 @@ public class ArtistLoader extends MediaStoreToRealmLoader {
                 String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST));
                 int numberOfAlbums = Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS)));
                 int numberOfTracks = Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS)));
-                ArtistEntity entity = ArtistEntity.createOrUpdate(realm, id, artist, numberOfAlbums, numberOfTracks);
+                ArtistEntity.createOrUpdate(realm, id, artist, numberOfAlbums, numberOfTracks);
             }
 
             cursor.close();
