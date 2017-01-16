@@ -17,7 +17,6 @@ import net.hogelab.musicbrowser.viewmodel.ArtistListViewModel;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
 
 /**
  * Created by kobayasi on 2016/04/01.
@@ -32,6 +31,17 @@ public class ArtistListFragment extends Fragment {
     private Realm mRealm;
     private FragmentArtistListBinding mBinding;
     private ArtistListAdapter mAdapter;
+
+    private ArtistList mArtistList;
+    private final RealmChangeListener<ArtistList> mChangedListener = new RealmChangeListener<ArtistList>() {
+
+        @Override
+        public void onChange(ArtistList element) {
+            if (element.isValid() && element.isLoaded()) {
+                mAdapter.swapListWrapper(new ArtistListWrapper(element));
+            }
+        }
+    };
 
 
     private final LoaderManager.LoaderCallbacks artistListLoaderCallback = new LoaderManager.LoaderCallbacks<String>() {
@@ -48,9 +58,8 @@ public class ArtistListFragment extends Fragment {
 
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
-            ArtistList list = mRealm.where(ArtistList.class).equalTo("id", data).findFirst();
-            if (list != null) {
-                mAdapter.swapListWrapper(new ArtistListWrapper(list));
+            if (data != null) {
+                addChangedListener(data);
             }
         }
     };
@@ -64,8 +73,6 @@ public class ArtistListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mRealm = Realm.getDefaultInstance();
     }
 
 
@@ -89,18 +96,45 @@ public class ArtistListFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        try {
+            ArtistListActivity activity = (ArtistListActivity) getActivity();
+            mRealm = activity.getRealm();
+        } catch (ClassCastException e) {
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        removeChangedListener();
+        mRealm = null;
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
 
         getLoaderManager().destroyLoader(ARTIST_LIST_LOADER_ID);
     }
 
-    @Override
-    public void onDestroy() {
-        if (mRealm != null) {
-            mRealm.close();
-        }
 
-        super.onDestroy();
+    private void addChangedListener(String id) {
+        removeChangedListener();
+
+        if (mRealm != null) {
+            mArtistList = mRealm.where(ArtistList.class).equalTo("id", id).findFirstAsync();
+            mArtistList.addChangeListener(mChangedListener);
+        }
+    }
+
+    private void removeChangedListener() {
+        if (mArtistList != null) {
+            mArtistList.removeChangeListener(mChangedListener);
+            mArtistList = null;
+        }
     }
 }
