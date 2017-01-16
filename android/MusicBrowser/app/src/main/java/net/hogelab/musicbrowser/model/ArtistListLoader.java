@@ -4,11 +4,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
 
-import net.hogelab.musicbrowser.model.entity.Artist;
-import net.hogelab.musicbrowser.model.entity.ArtistList;
-
-import java.util.Date;
-import java.util.UUID;
+import net.hogelab.musicbrowser.model.entity.ArtistEntity;
+import net.hogelab.musicbrowser.model.entity.ArtistListOwner;
+import net.hogelab.musicbrowser.model.entity.EntityHolder;
+import net.hogelab.musicbrowser.model.entity.EntityList;
 
 import io.realm.Realm;
 
@@ -35,27 +34,25 @@ public class ArtistListLoader extends MediaStoreToRealmLoader {
                 MediaStore.Audio.Artists.DEFAULT_SORT_ORDER);
 
         if (cursor != null) {
-            String listId = UUID.randomUUID().toString();
-            ArtistList list = realm.createObject(ArtistList.class, listId);
-            list.setCreationDate(new Date());
+            EntityList entityList = EntityList.create(realm);
 
             while (cursor.moveToNext()) {
                 String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID));
-                Artist entity = realm.where(Artist.class).equalTo("id", id).findFirst();
-                if (entity == null) {
-                    entity = realm.createObject(Artist.class, id);
-                }
+                String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST));
+                int numberOfAlbums = Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS)));
+                int numberOfTracks = Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS)));
+                ArtistEntity entity = ArtistEntity.createOrUpdate(realm, id, artist, numberOfAlbums, numberOfTracks);
 
-                entity.setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST)));
-                entity.setNumberOfAlbums(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS))));
-                entity.setNumberOfTracks(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS))));
-
-                list.getEntities().add(entity);
+                EntityHolder holder = EntityHolder.createWithArtist(realm, entity);
+                entityList.addHolder(holder);
             }
 
             cursor.close();
 
-            return listId;
+            ArtistListOwner listOwner = ArtistListOwner.createOrFetch(realm);
+            listOwner.insertArtistList(entityList);
+
+            return listOwner.getId();
         }
 
         return null;
