@@ -16,7 +16,7 @@ public class EntityList extends RealmObject {
     @PrimaryKey
     private String id;
 
-    private RealmList<EntityHolder> entities;
+    private RealmList<EntityHolder> holders;
 
 
     // getter and setter
@@ -28,12 +28,12 @@ public class EntityList extends RealmObject {
         this.id = id;
     }
 
-    public RealmList<EntityHolder> getEntities() {
-        return entities;
+    public RealmList<EntityHolder> getHolders() {
+        return holders;
     }
 
-    public void setEntities(RealmList<EntityHolder> entities) {
-        this.entities = entities;
+    public void setHolders(RealmList<EntityHolder> entities) {
+        this.holders = entities;
     }
 
 
@@ -47,11 +47,19 @@ public class EntityList extends RealmObject {
 
 
     // accessor methods
-    public void addHolder(EntityHolder holder) {
-        entities.add(holder);
+    public int size() {
+        return holders.size();
     }
 
-    public void addHolder(int location, EntityHolder holder) {
-        entities.add(location, holder);
+    public EntityHolder getHolder(int location) {
+        return holders.get(location);
+    }
+
+    public void addHolder(EntityHolder holder) {
+        holders.add(holder);
+    }
+
+    public void insertHolder(int location, EntityHolder holder) {
+        holders.add(location, holder);
     }
 }
