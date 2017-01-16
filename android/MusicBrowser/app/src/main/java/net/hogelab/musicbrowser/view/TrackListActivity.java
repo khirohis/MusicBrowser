@@ -21,6 +21,7 @@ import net.hogelab.musicbrowser.model.entity.Album;
 import net.hogelab.musicbrowser.viewmodel.TrackListRootViewModel;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 
 /**
  * Created by kobayasi on 2016/04/11.
@@ -35,9 +36,21 @@ public class TrackListActivity extends AppCompatActivity {
 
 
     private Realm mRealm;
+
     private ActivityTrackListBinding mBinding;
     private TrackListRootViewModel mViewModel;
+
     private String mAlbumId;
+    private Album mAlbum;
+    private final RealmChangeListener<Album> mChangeListener = new RealmChangeListener<Album>() {
+
+        @Override
+        public void onChange(Album element) {
+            if (element.isValid() && element.isLoaded()) {
+                mViewModel.setupFromAlbum(element);
+            }
+        }
+    };
 
 
     public static Intent newIntent(Context context) {
@@ -75,10 +88,6 @@ public class TrackListActivity extends AppCompatActivity {
 
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
-            if (data != null) {
-                Album album = mRealm.where(Album.class).equalTo("id", data).findFirst();
-                mViewModel.setupFromAlbum(album);
-            }
         }
     };
 
@@ -133,10 +142,12 @@ public class TrackListActivity extends AppCompatActivity {
         super.onResume();
 
         EventBus.getBus().register(this);
+        addChangeListener(mAlbumId);
     }
 
     @Override
     public void onPause() {
+        removeChangeListener();
         EventBus.getBus().unregister(this);
 
         super.onPause();
@@ -156,5 +167,22 @@ public class TrackListActivity extends AppCompatActivity {
     @Subscribe
     public void openTrack(OpenTrackEvent event) {
         Log.d(TAG, "Track ID: " + event.trackId);
+    }
+
+
+    private void addChangeListener(String id) {
+        removeChangeListener();
+
+        if (mRealm != null && mAlbumId != null) {
+            mAlbum = mRealm.where(Album.class).equalTo("id", id).findFirstAsync();
+            mAlbum.addChangeListener(mChangeListener);
+        }
+    }
+
+    private void removeChangeListener() {
+        if (mAlbum != null) {
+            mAlbum.removeChangeListener(mChangeListener);
+            mAlbum = null;
+        }
     }
 }
