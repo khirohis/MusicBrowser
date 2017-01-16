@@ -15,6 +15,7 @@ import net.hogelab.musicbrowser.model.entity.wrapper.TrackListWrapper;
 import net.hogelab.musicbrowser.viewmodel.TrackListViewModel;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 
 /**
  * Created by kobayasi on 2016/04/18.
@@ -33,6 +34,17 @@ public class TrackListFragment extends Fragment {
     private TrackListAdapter mAdapter;
     private String mAlbumId;
 
+    private TrackList mTrackList;
+    private final RealmChangeListener<TrackList> mChangedListener = new RealmChangeListener<TrackList>() {
+
+        @Override
+        public void onChange(TrackList element) {
+            if (element.isValid() && element.isLoaded()) {
+                mAdapter.swapListWrapper(new TrackListWrapper(element));
+            }
+        }
+    };
+
 
     private final LoaderManager.LoaderCallbacks trackListLoaderCallback = new LoaderManager.LoaderCallbacks<String>() {
 
@@ -49,9 +61,8 @@ public class TrackListFragment extends Fragment {
 
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
-            TrackList list = mRealm.where(TrackList.class).equalTo("id", data).findFirst();
-            if (list != null) {
-                mAdapter.swapListWrapper(new TrackListWrapper(list));
+            if (data != null) {
+                addChangedListener(data);
             }
         }
     };
@@ -73,8 +84,6 @@ public class TrackListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mRealm = Realm.getDefaultInstance();
 
         Bundle args = getArguments();
         if (args != null) {
@@ -106,18 +115,45 @@ public class TrackListFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        try {
+            TrackListActivity activity = (TrackListActivity) getActivity();
+            mRealm = activity.getRealm();
+        } catch (ClassCastException e) {
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        removeChangedListener();
+        mRealm = null;
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
 
         getLoaderManager().destroyLoader(TRACK_LIST_LOADER_ID);
     }
 
-    @Override
-    public void onDestroy() {
-        if (mRealm != null) {
-            mRealm.close();
-        }
 
-        super.onDestroy();
+    private void addChangedListener(String id) {
+        removeChangedListener();
+
+        if (mRealm != null) {
+            mTrackList = mRealm.where(TrackList.class).equalTo("id", id).findFirstAsync();
+            mTrackList.addChangeListener(mChangedListener);
+        }
+    }
+
+    private void removeChangedListener() {
+        if (mTrackList != null) {
+            mTrackList.removeChangeListener(mChangedListener);
+            mTrackList = null;
+        }
     }
 }

@@ -52,6 +52,11 @@ public class TrackListActivity extends AppCompatActivity {
     }
 
 
+    public Realm getRealm() {
+        return mRealm;
+    }
+
+
     private final LoaderManager.LoaderCallbacks albumLoaderCallback = new LoaderManager.LoaderCallbacks<String>() {
 
         @Override
@@ -141,6 +146,7 @@ public class TrackListActivity extends AppCompatActivity {
     public void onDestroy() {
         if (mRealm != null) {
             mRealm.close();
+            mRealm = null;
         }
 
         super.onDestroy();
