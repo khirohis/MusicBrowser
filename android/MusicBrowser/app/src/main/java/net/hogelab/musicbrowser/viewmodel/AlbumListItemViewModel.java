@@ -7,7 +7,7 @@ import android.view.View;
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenAlbumEvent;
-import net.hogelab.musicbrowser.model.entity.Album;
+import net.hogelab.musicbrowser.model.entity.AlbumEntity;
 
 /**
  * Created by kobayasi on 2016/04/11.
@@ -23,7 +23,7 @@ public class AlbumListItemViewModel {
     private String albumArt;
 
 
-    public AlbumListItemViewModel(Context context, Album listItem) {
+    public AlbumListItemViewModel(Context context, AlbumEntity listItem) {
         this.context = context;
 
         setId(listItem.getId());
