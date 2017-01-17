@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
 
-import net.hogelab.musicbrowser.model.entity.Album;
+import net.hogelab.musicbrowser.model.entity.AlbumEntity;
 
 import io.realm.Realm;
 
@@ -37,14 +37,10 @@ public class AlbumLoader extends MediaStoreToRealmLoader {
         if (cursor != null) {
             if (cursor.moveToNext()) {
                 String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID));
-                Album entity = realm.where(Album.class).equalTo("id", id).findFirst();
-                if (entity == null) {
-                    entity = realm.createObject(Album.class, id);
-                }
-
-                entity.setAlbum(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM)));
-                entity.setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST)));
-                entity.setAlbumArt(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ART)));
+                String album = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM));
+                String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST));
+                String albumArt = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ART));
+                AlbumEntity.createOrUpdate(realm, id, album, artist, albumArt);
             }
 
             cursor.close();

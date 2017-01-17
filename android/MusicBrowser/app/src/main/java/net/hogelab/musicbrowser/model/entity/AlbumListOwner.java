@@ -1,5 +1,7 @@
 package net.hogelab.musicbrowser.model.entity;
 
+import android.support.annotation.Nullable;
+
 import java.util.UUID;
 
 import io.realm.Realm;
@@ -9,14 +11,15 @@ import io.realm.RealmQuery;
 import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by kobayasi on 2017/01/16.
+ * Created by kobayasi on 2017/01/17.
  */
 
-public class ArtistListOwner extends RealmObject {
+public class AlbumListOwner extends RealmObject {
 
     @PrimaryKey
     private String id;
 
+    private String artistId;
     private RealmList<EntityList> lists;
 
 
@@ -26,6 +29,14 @@ public class ArtistListOwner extends RealmObject {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getArtistId() {
+        return artistId;
+    }
+
+    public void setArtistId(String artistId) {
+        this.artistId = artistId;
     }
 
     public RealmList<EntityList> getLists() {
@@ -38,11 +49,12 @@ public class ArtistListOwner extends RealmObject {
 
 
     // RealmObject factory methods
-    public static ArtistListOwner createOrFetch(Realm realm) {
-        ArtistListOwner listOwner = query(realm).findFirst();
+    public static AlbumListOwner createOrFetch(Realm realm, @Nullable String artistId) {
+        AlbumListOwner listOwner = queryById(realm, artistId).findFirst();
         if (listOwner == null) {
             String id = UUID.randomUUID().toString();
-            listOwner = realm.createObject(ArtistListOwner.class, id);
+            listOwner = realm.createObject(AlbumListOwner.class, id);
+            listOwner.artistId = artistId;
         }
 
         return listOwner;
@@ -50,17 +62,17 @@ public class ArtistListOwner extends RealmObject {
 
 
     // RealmQuery factory methods
-    public static RealmQuery<ArtistListOwner> query(Realm realm) {
-        return realm.where(ArtistListOwner.class);
+    public static RealmQuery<AlbumListOwner> queryById(Realm realm, @Nullable String artistId) {
+        return realm.where(AlbumListOwner.class).equalTo("artistId", artistId);
     }
 
 
     // accessor methods
-    public EntityList getFirstArtistList() {
+    public EntityList getFirstAlbumList() {
         return lists.first();
     }
 
-    public void insertArtistList(EntityList list) {
+    public void insertAlbumList(EntityList list) {
         lists.add(0, list);
     }
 }

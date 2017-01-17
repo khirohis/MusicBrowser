@@ -17,7 +17,7 @@ import net.hogelab.musicbrowser.databinding.ActivityTrackListBinding;
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenTrackEvent;
 import net.hogelab.musicbrowser.model.AlbumLoader;
-import net.hogelab.musicbrowser.model.entity.Album;
+import net.hogelab.musicbrowser.model.entity.AlbumEntity;
 import net.hogelab.musicbrowser.viewmodel.TrackListRootViewModel;
 
 import io.realm.Realm;
@@ -41,11 +41,11 @@ public class TrackListActivity extends AppCompatActivity {
     private TrackListRootViewModel mViewModel;
 
     private String mAlbumId;
-    private Album mAlbum;
-    private final RealmChangeListener<Album> mChangeListener = new RealmChangeListener<Album>() {
+    private AlbumEntity mAlbum;
+    private final RealmChangeListener<AlbumEntity> mChangeListener = new RealmChangeListener<AlbumEntity>() {
 
         @Override
-        public void onChange(Album element) {
+        public void onChange(AlbumEntity element) {
             if (element.isValid() && element.isLoaded()) {
                 mViewModel.setupFromAlbum(element);
             }
@@ -174,7 +174,7 @@ public class TrackListActivity extends AppCompatActivity {
         removeChangeListener();
 
         if (mRealm != null && mAlbumId != null) {
-            mAlbum = mRealm.where(Album.class).equalTo("id", id).findFirstAsync();
+            mAlbum = AlbumEntity.queryById(mRealm, id).findFirstAsync();
             mAlbum.addChangeListener(mChangeListener);
         }
     }

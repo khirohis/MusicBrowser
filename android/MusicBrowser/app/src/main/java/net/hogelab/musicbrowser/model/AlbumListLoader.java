@@ -5,8 +5,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 
-import net.hogelab.musicbrowser.model.entity.Album;
-import net.hogelab.musicbrowser.model.entity.AlbumList;
+import net.hogelab.musicbrowser.model.entity.AlbumEntity;
+import net.hogelab.musicbrowser.model.entity.AlbumListOwner;
+import net.hogelab.musicbrowser.model.entity.EntityHolder;
+import net.hogelab.musicbrowser.model.entity.EntityList;
 
 import java.util.Date;
 import java.util.UUID;
@@ -47,28 +49,25 @@ public class AlbumListLoader extends MediaStoreToRealmLoader {
                 MediaStore.Audio.Albums.DEFAULT_SORT_ORDER);
 
         if (cursor != null) {
-            String listId = UUID.randomUUID().toString();
-            AlbumList list = realm.createObject(AlbumList.class, listId);
-            list.setCreationDate(new Date());
-            list.setParentId(mArtistId);
+            EntityList entityList = EntityList.create(realm);
 
             while (cursor.moveToNext()) {
-                String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID));
-                Album entity = realm.where(Album.class).equalTo("id", id).findFirst();
-                if (entity == null) {
-                    entity = realm.createObject(Album.class, id);
-                }
+                String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID));
+                String album = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM));
+                String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST));
+                String albumArt = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ART));
+                AlbumEntity entity = AlbumEntity.createOrUpdate(realm, id, album, artist, albumArt);
 
-                entity.setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST)));
-                entity.setAlbum(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM)));
-                entity.setAlbumArt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART)));
-
-                list.getEntities().add(entity);
+                EntityHolder holder = EntityHolder.createWithAlbum(realm, entity);
+                entityList.addHolder(holder);
             }
 
             cursor.close();
 
-            return listId;
+            AlbumListOwner listOwner = AlbumListOwner.createOrFetch(realm, mArtistId);
+            listOwner.insertAlbumList(entityList);
+
+            return listOwner.getId();
         }
 
         return null;
