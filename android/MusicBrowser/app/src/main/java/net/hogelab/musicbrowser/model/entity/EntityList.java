@@ -45,6 +45,14 @@ public class EntityList extends RealmObject {
         return list;
     }
 
+    public static void cascadeDelete(EntityList list) {
+        for (EntityHolder holder : list.holders) {
+            EntityHolder.cascadeDelete(holder);
+        }
+
+        list.deleteFromRealm();
+    }
+
 
     // accessor methods
     public int size() {

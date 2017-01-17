@@ -39,7 +39,7 @@ public class ArtistListOwner extends RealmObject {
 
     // RealmObject factory methods
     public static ArtistListOwner createOrFetch(Realm realm) {
-        ArtistListOwner listOwner = realm.where(ArtistListOwner.class).findFirst();
+        ArtistListOwner listOwner = query(realm).findFirst();
         if (listOwner == null) {
             String id = UUID.randomUUID().toString();
             listOwner = realm.createObject(ArtistListOwner.class, id);
