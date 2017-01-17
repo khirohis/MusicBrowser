@@ -13,36 +13,16 @@ import io.realm.annotations.PrimaryKey;
 public class EntityHolder extends RealmObject {
 
     public enum EntityKind {
-        ARTIST(1), ALBUM(2), TRACK(3), ;
-
-        private final int id;
-
-        private EntityKind(int id) {
-            this.id = id;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public EntityKind getKind(int id) {
-            for (EntityKind kind : EntityKind.values()) {
-                if (kind.getId() == id) {
-                    return kind;
-                }
-            }
-
-            return null;
-        }
+        ARTIST, ALBUM, TRACK,
     }
 
 
     @PrimaryKey
     private String id;
 
-    private int kind;
+    private String kind;
     private ArtistEntity artist;
-//    private AlbumEntity album;
+    private AlbumEntity album;
 //    private TrackEntity track;
 
 
@@ -55,11 +35,11 @@ public class EntityHolder extends RealmObject {
         this.id = id;
     }
 
-    public int getKind() {
+    public String getKind() {
         return kind;
     }
 
-    public void setKind(int kind) {
+    public void setKind(String kind) {
         this.kind = kind;
     }
 
@@ -71,22 +51,90 @@ public class EntityHolder extends RealmObject {
         this.artist = artist;
     }
 
+    public AlbumEntity getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(AlbumEntity album) {
+        this.album = album;
+    }
+
 
     // RealmObject factory methods
-    public static EntityHolder createWithArtist(Realm realm, ArtistEntity artist) {
+    public static EntityHolder createWithArtist(Realm realm, ArtistEntity entity) {
         String id = UUID.randomUUID().toString();
         EntityHolder holder = realm.createObject(EntityHolder.class, id);
-        holder.setKind(EntityKind.ARTIST.getId());
-        holder.setArtist(artist);
+        holder.setKind(EntityKind.ARTIST.name());
+        holder.setArtist(entity);
 
-        artist.getHolders().add(holder);
+        entity.getHolders().add(holder);
 
         return holder;
     }
 
+    public static EntityHolder createWithAlbum(Realm realm, AlbumEntity entity) {
+        String id = UUID.randomUUID().toString();
+        EntityHolder holder = realm.createObject(EntityHolder.class, id);
+        holder.setKind(EntityKind.ALBUM.name());
+        holder.setAlbum(entity);
 
-    // utility methods
+        entity.getHolders().add(holder);
+
+        return holder;
+    }
+
+    public static void cascadeDelete(EntityHolder holder) {
+        switch (EntityKind.valueOf(holder.kind)) {
+
+            case ARTIST:
+                holder.artist.getHolders().remove(holder);
+                if (holder.artist.getHolders().size() <= 0) {
+                    holder.artist.deleteFromRealm();
+                }
+                break;
+
+            case ALBUM:
+                holder.album.getHolders().remove(holder);
+                if (holder.album.getHolders().size() <= 0) {
+                    holder.album.deleteFromRealm();
+                }
+                break;
+
+            case TRACK:
+                // constructing!!!
+                break;
+
+            default:
+                // エラーログ
+                break;
+        }
+
+        holder.deleteFromRealm();
+    }
+
+
+    // accessor methods
+    public Object getEntity() {
+        switch (EntityKind.valueOf(kind)) {
+
+            case ARTIST:
+                return artist;
+
+            case ALBUM:
+                return album;
+
+            case TRACK:
+                // constructing!!!
+
+            default:
+                // エラーログ
+                break;
+        }
+
+        return null;
+    }
+
     public boolean isKind(EntityKind kind) {
-        return this.kind == kind.getId();
+        return this.kind.equals(kind.name());
     }
 }

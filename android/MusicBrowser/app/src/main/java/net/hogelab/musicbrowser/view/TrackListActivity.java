@@ -17,7 +17,7 @@ import net.hogelab.musicbrowser.databinding.ActivityTrackListBinding;
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenTrackEvent;
 import net.hogelab.musicbrowser.model.AlbumLoader;
-import net.hogelab.musicbrowser.model.entity.Album;
+import net.hogelab.musicbrowser.model.entity.AlbumEntity;
 import net.hogelab.musicbrowser.viewmodel.TrackListRootViewModel;
 
 import io.realm.Realm;
@@ -38,6 +38,16 @@ public class TrackListActivity extends AppCompatActivity {
     private ActivityTrackListBinding mBinding;
     private TrackListRootViewModel mViewModel;
     private String mAlbumId;
+    private AlbumEntity mAlbum;
+    private final RealmChangeListener<AlbumEntity> mChangeListener = new RealmChangeListener<AlbumEntity>() {
+
+        @Override
+        public void onChange(AlbumEntity element) {
+            if (element.isValid() && element.isLoaded()) {
+                mViewModel.setupFromAlbum(element);
+            }
+        }
+    };
 
 
     public static Intent newIntent(Context context) {
@@ -156,5 +166,22 @@ public class TrackListActivity extends AppCompatActivity {
     @Subscribe
     public void openTrack(OpenTrackEvent event) {
         Log.d(TAG, "Track ID: " + event.trackId);
+    }
+
+
+    private void addChangeListener(String id) {
+        removeChangeListener();
+
+        if (mRealm != null && mAlbumId != null) {
+            mAlbum = AlbumEntity.queryById(mRealm, id).findFirstAsync();
+            mAlbum.addChangeListener(mChangeListener);
+        }
+    }
+
+    private void removeChangeListener() {
+        if (mAlbum != null) {
+            mAlbum.removeChangeListener(mChangeListener);
+            mAlbum = null;
+        }
     }
 }

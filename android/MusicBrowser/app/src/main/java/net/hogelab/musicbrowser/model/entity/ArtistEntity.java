@@ -70,7 +70,7 @@ public class ArtistEntity extends RealmObject {
     }
 
     public static ArtistEntity createOrFetch(Realm realm, String id) {
-        ArtistEntity entity = findById(realm, id).findFirst();
+        ArtistEntity entity = queryById(realm, id).findFirst();
         if (entity == null) {
             entity = realm.createObject(ArtistEntity.class, id);
         }
@@ -88,7 +88,7 @@ public class ArtistEntity extends RealmObject {
     }
 
     // RealmQuery factory methods
-    public static RealmQuery<ArtistEntity> findById(Realm realm, String id) {
+    public static RealmQuery<ArtistEntity> queryById(Realm realm, String id) {
         return realm.where(ArtistEntity.class).equalTo("id", id);
     }
 }

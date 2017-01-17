@@ -6,7 +6,7 @@ import android.databinding.Bindable;
 
 import net.hogelab.musicbrowser.BR;
 import net.hogelab.musicbrowser.R;
-import net.hogelab.musicbrowser.model.entity.Album;
+import net.hogelab.musicbrowser.model.entity.AlbumEntity;
 
 /**
  * Created by kobayasi on 2016/04/18.
@@ -22,14 +22,14 @@ public class TrackListRootViewModel extends BaseObservable {
     private String albumArt;
 
 
-    public TrackListRootViewModel(Context context, Album album) {
+    public TrackListRootViewModel(Context context, AlbumEntity album) {
         this.context = context;
 
         setupFromAlbum(album);
     }
 
 
-    public void setupFromAlbum(Album album) {
+    public void setupFromAlbum(AlbumEntity album) {
         if (album != null) {
             setId(album.getId());
             setAlbum(album.getAlbum());
