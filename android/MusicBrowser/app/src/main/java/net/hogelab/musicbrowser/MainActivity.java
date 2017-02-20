@@ -1,5 +1,6 @@
 package net.hogelab.musicbrowser;
 
+import net.hogelab.musicbrowser.promise.Sandbox;
 import net.hogelab.musicbrowser.view.AlbumListActivity;
 import net.hogelab.musicbrowser.view.ArtistListActivity;
 import net.hogelab.musicbrowser.view.TrackListActivity;
