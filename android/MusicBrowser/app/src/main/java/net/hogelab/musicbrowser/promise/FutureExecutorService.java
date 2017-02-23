@@ -1,5 +1,6 @@
 package net.hogelab.musicbrowser.promise;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,10 +25,27 @@ public class FutureExecutorService {
         this.executorService = executorService;
     }
 
-    public void submit(Runnable runnable) {
-        executorService.submit(runnable);
+    public MyPromise submit(Callable<Object> callable) {
+        MyPromise promise = new MyPromise(callable);
+
+        return submit(promise);
     }
 
+    public MyFutureTask submit(MyFutureTask future) {
+        executorService.submit(future);
+
+        return future;
+    }
+
+    public MyPromise submit(MyPromise promise) {
+        executorService.submit(promise);
+
+        return promise;
+    }
+
+    public void shutdown() {
+        executorService.shutdown();
+    }
 
     private static class FutureExecutorServiceInstanceHolder {
         private static final FutureExecutorService instance = new FutureExecutorService();
