@@ -11,8 +11,7 @@ import android.view.ViewGroup;
 
 import net.hogelab.musicbrowser.databinding.FragmentArtistListBinding;
 import net.hogelab.musicbrowser.model.ArtistListLoader;
-import net.hogelab.musicbrowser.model.entity.ArtistList;
-import net.hogelab.musicbrowser.model.entity.wrapper.ArtistListWrapper;
+import net.hogelab.musicbrowser.model.entity.ArtistListOwner;
 import net.hogelab.musicbrowser.viewmodel.ArtistListViewModel;
 
 import io.realm.Realm;
@@ -32,13 +31,13 @@ public class ArtistListFragment extends Fragment {
     private FragmentArtistListBinding mBinding;
     private ArtistListAdapter mAdapter;
 
-    private ArtistList mArtistList;
-    private final RealmChangeListener<ArtistList> mChangedListener = new RealmChangeListener<ArtistList>() {
+    private ArtistListOwner mListOwner;
+    private final RealmChangeListener<ArtistListOwner> mArtistListChangeListener = new RealmChangeListener<ArtistListOwner>() {
 
         @Override
-        public void onChange(ArtistList element) {
+        public void onChange(ArtistListOwner element) {
             if (element.isValid() && element.isLoaded()) {
-                mAdapter.swapListWrapper(new ArtistListWrapper(element));
+                mAdapter.swapList(element.getFirstArtistList());
             }
         }
     };
@@ -53,14 +52,12 @@ public class ArtistListFragment extends Fragment {
 
         @Override
         public void onLoaderReset(Loader<String> loader) {
-            mAdapter.swapListWrapper(null);
+            mAdapter.swapList(null);
         }
 
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
-            if (data != null) {
-                addChangedListener(data);
-            }
+            // ロードを待って表示したい場合はココで addChangeListener()
         }
     };
 
@@ -102,6 +99,9 @@ public class ArtistListFragment extends Fragment {
         try {
             ArtistListActivity activity = (ArtistListActivity) getActivity();
             mRealm = activity.getRealm();
+
+            // Loader のロードを待たずに保存済のリスト表示をする場合ココで
+            addChangeListener();
         } catch (ClassCastException e) {
         }
     }
@@ -110,7 +110,7 @@ public class ArtistListFragment extends Fragment {
     public void onStop() {
         super.onStop();
 
-        removeChangedListener();
+        removeChangeListener();
         mRealm = null;
     }
 
@@ -122,19 +122,19 @@ public class ArtistListFragment extends Fragment {
     }
 
 
-    private void addChangedListener(String id) {
-        removeChangedListener();
+    private void addChangeListener() {
+        removeChangeListener();
 
         if (mRealm != null) {
-            mArtistList = mRealm.where(ArtistList.class).equalTo("id", id).findFirstAsync();
-            mArtistList.addChangeListener(mChangedListener);
+            mListOwner = ArtistListOwner.query(mRealm).findFirstAsync();
+            mListOwner.addChangeListener(mArtistListChangeListener);
         }
     }
 
-    private void removeChangedListener() {
-        if (mArtistList != null) {
-            mArtistList.removeChangeListener(mChangedListener);
-            mArtistList = null;
+    private void removeChangeListener() {
+        if (mListOwner != null) {
+            mListOwner.removeChangeListener(mArtistListChangeListener);
+            mListOwner = null;
         }
     }
 }

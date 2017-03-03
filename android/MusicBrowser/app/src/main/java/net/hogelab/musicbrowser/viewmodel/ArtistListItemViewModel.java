@@ -6,7 +6,7 @@ import android.view.View;
 
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenArtistEvent;
-import net.hogelab.musicbrowser.model.entity.Artist;
+import net.hogelab.musicbrowser.model.entity.ArtistEntity;
 
 
 /**
@@ -23,7 +23,7 @@ public class ArtistListItemViewModel {
     private int numberOfTracks;
 
 
-    public ArtistListItemViewModel(Context context, Artist listItem) {
+    public ArtistListItemViewModel(Context context, ArtistEntity listItem) {
         this.context = context;
 
         id = listItem.getId();
