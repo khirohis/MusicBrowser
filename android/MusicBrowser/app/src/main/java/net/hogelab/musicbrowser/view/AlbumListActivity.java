@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 
 import com.squareup.otto.Subscribe;
@@ -16,7 +15,7 @@ import net.hogelab.musicbrowser.databinding.ActivityAlbumListBinding;
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenAlbumEvent;
 import net.hogelab.musicbrowser.model.ArtistLoader;
-import net.hogelab.musicbrowser.model.entity.Artist;
+import net.hogelab.musicbrowser.model.entity.ArtistEntity;
 import net.hogelab.musicbrowser.viewmodel.AlbumListRootViewModel;
 
 import io.realm.Realm;
@@ -40,11 +39,11 @@ public class AlbumListActivity extends AppCompatActivity {
     private AlbumListRootViewModel mViewModel;
 
     private String mArtistId;
-    private Artist mArtist;
-    private final RealmChangeListener<Artist> mChangeListener = new RealmChangeListener<Artist>() {
+    private ArtistEntity mArtist;
+    private final RealmChangeListener<ArtistEntity> mChangeListener = new RealmChangeListener<ArtistEntity>() {
 
         @Override
-        public void onChange(Artist element) {
+        public void onChange(ArtistEntity element) {
             if (element.isValid() && element.isLoaded()) {
                 mViewModel.setupFromArtist(element);
             }
@@ -168,7 +167,7 @@ public class AlbumListActivity extends AppCompatActivity {
         removeChangeListener();
 
         if (mRealm != null && mArtistId != null) {
-            mArtist = mRealm.where(Artist.class).equalTo("id", id).findFirstAsync();
+            mArtist = mRealm.where(ArtistEntity.class).equalTo("id", id).findFirstAsync();
             mArtist.addChangeListener(mChangeListener);
         }
     }

@@ -11,8 +11,7 @@ import android.view.ViewGroup;
 
 import net.hogelab.musicbrowser.databinding.FragmentAlbumListBinding;
 import net.hogelab.musicbrowser.model.AlbumListLoader;
-import net.hogelab.musicbrowser.model.entity.AlbumList;
-import net.hogelab.musicbrowser.model.entity.wrapper.AlbumListWrapper;
+import net.hogelab.musicbrowser.model.entity.AlbumListOwner;
 import net.hogelab.musicbrowser.viewmodel.AlbumListViewModel;
 
 import io.realm.Realm;
@@ -35,13 +34,13 @@ public class AlbumListFragment extends Fragment {
     private AlbumListAdapter mAdapter;
     private String mArtistId;
 
-    private AlbumList mAlbumList;
-    private final RealmChangeListener<AlbumList> mChangedListener = new RealmChangeListener<AlbumList>() {
+    private AlbumListOwner mListOwner;
+    private final RealmChangeListener<AlbumListOwner> mChangedListener = new RealmChangeListener<AlbumListOwner>() {
 
         @Override
-        public void onChange(AlbumList element) {
+        public void onChange(AlbumListOwner element) {
             if (element.isValid() && element.isLoaded()) {
-                mAdapter.swapListWrapper(new AlbumListWrapper(element));
+                mAdapter.swapList(element.getFirstAlbumList());
             }
         }
     };
@@ -57,14 +56,12 @@ public class AlbumListFragment extends Fragment {
 
         @Override
         public void onLoaderReset(Loader<String> loader) {
-            mAdapter.swapListWrapper(null);
+            mAdapter.swapList(null);
         }
 
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
-            if (data != null) {
-                addChangedListener(data);
-            }
+            // ロードを待って表示したい場合はココで addChangeListener()
         }
     };
 
@@ -122,6 +119,9 @@ public class AlbumListFragment extends Fragment {
         try {
             AlbumListActivity activity = (AlbumListActivity) getActivity();
             mRealm = activity.getRealm();
+
+            // Loader のロードを待たずに保存済のリスト表示をする場合ココで
+            addChangeListener(mArtistId);
         } catch (ClassCastException e) {
         }
     }
@@ -130,7 +130,7 @@ public class AlbumListFragment extends Fragment {
     public void onStop() {
         super.onStop();
 
-        removeChangedListener();
+        removeChangeListener();
         mRealm = null;
     }
 
@@ -142,19 +142,19 @@ public class AlbumListFragment extends Fragment {
     }
 
 
-    private void addChangedListener(String id) {
-        removeChangedListener();
+    private void addChangeListener(String id) {
+        removeChangeListener();
 
         if (mRealm != null) {
-            mAlbumList = mRealm.where(AlbumList.class).equalTo("id", id).findFirstAsync();
-            mAlbumList.addChangeListener(mChangedListener);
+            mListOwner = AlbumListOwner.queryById(mRealm, id).findFirstAsync();
+            mListOwner.addChangeListener(mChangedListener);
         }
     }
 
-    private void removeChangedListener() {
-        if (mAlbumList != null) {
-            mAlbumList.removeChangeListener(mChangedListener);
-            mAlbumList = null;
+    private void removeChangeListener() {
+        if (mListOwner != null) {
+            mListOwner.removeChangeListener(mChangedListener);
+            mListOwner = null;
         }
     }
 }

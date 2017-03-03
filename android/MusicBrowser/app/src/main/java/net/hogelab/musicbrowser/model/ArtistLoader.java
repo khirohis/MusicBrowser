@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
 
-import net.hogelab.musicbrowser.model.entity.Artist;
+import net.hogelab.musicbrowser.model.entity.ArtistEntity;
 
 import io.realm.Realm;
 
@@ -37,14 +37,10 @@ public class ArtistLoader extends MediaStoreToRealmLoader {
         if (cursor != null) {
             if (cursor.moveToNext()) {
                 String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID));
-                Artist entity = realm.where(Artist.class).equalTo("id", id).findFirst();
-                if (entity == null) {
-                    entity = realm.createObject(Artist.class, id);
-                }
-
-                entity.setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST)));
-                entity.setNumberOfAlbums(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS))));
-                entity.setNumberOfTracks(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS))));
+                String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST));
+                int numberOfAlbums = Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS)));
+                int numberOfTracks = Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS)));
+                ArtistEntity.createOrUpdate(realm, id, artist, numberOfAlbums, numberOfTracks);
             }
 
             cursor.close();
