@@ -23,7 +23,7 @@ public class EntityHolder extends RealmObject {
     private String kind;
     private ArtistEntity artist;
     private AlbumEntity album;
-//    private TrackEntity track;
+    private TrackEntity track;
 
 
     // getter and setter
@@ -59,6 +59,14 @@ public class EntityHolder extends RealmObject {
         this.album = album;
     }
 
+    public TrackEntity getTrack() {
+        return track;
+    }
+
+    public void setTrack(TrackEntity track) {
+        this.track = track;
+    }
+
 
     // RealmObject factory methods
     public static EntityHolder createWithArtist(Realm realm, ArtistEntity entity) {
@@ -83,6 +91,18 @@ public class EntityHolder extends RealmObject {
         return holder;
     }
 
+    public static EntityHolder createWithTrack(Realm realm, TrackEntity entity) {
+        String id = UUID.randomUUID().toString();
+        EntityHolder holder = realm.createObject(EntityHolder.class, id);
+        holder.setKind(EntityKind.TRACK.name());
+        holder.setTrack(entity);
+
+        entity.getHolders().add(holder);
+
+        return holder;
+    }
+
+
     public static void cascadeDelete(EntityHolder holder) {
         switch (EntityKind.valueOf(holder.kind)) {
 
@@ -101,7 +121,10 @@ public class EntityHolder extends RealmObject {
                 break;
 
             case TRACK:
-                // constructing!!!
+                holder.track.getHolders().remove(holder);
+                if (holder.track.getHolders().size() <= 0) {
+                    holder.track.deleteFromRealm();
+                }
                 break;
 
             default:
@@ -124,7 +147,7 @@ public class EntityHolder extends RealmObject {
                 return album;
 
             case TRACK:
-                // constructing!!!
+                return track;
 
             default:
                 // エラーログ

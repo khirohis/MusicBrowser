@@ -10,12 +10,16 @@ import io.realm.Realm;
  */
 
 public abstract class MediaStoreToRealmLoader extends AsyncTaskLoader<String> {
+
+    private static final String TAG = MediaStoreToRealmLoader.class.getSimpleName();
+
     protected String mData;
 
 
     public MediaStoreToRealmLoader(Context context) {
         super(context);
     }
+
 
     protected abstract String loadData(Realm realm);
 
