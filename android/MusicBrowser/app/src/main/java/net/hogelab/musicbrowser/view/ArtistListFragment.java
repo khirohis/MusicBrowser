@@ -1,6 +1,8 @@
 package net.hogelab.musicbrowser.view;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -9,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.FragmentArtistListBinding;
 import net.hogelab.musicbrowser.model.ArtistListLoader;
 import net.hogelab.musicbrowser.model.entity.ArtistListOwner;
@@ -32,13 +35,10 @@ public class ArtistListFragment extends Fragment {
     private ArtistListAdapter mAdapter;
 
     private ArtistListOwner mListOwner;
-    private final RealmChangeListener<ArtistListOwner> mArtistListChangeListener = new RealmChangeListener<ArtistListOwner>() {
-
-        @Override
-        public void onChange(ArtistListOwner element) {
-            if (element.isValid() && element.isLoaded()) {
-                mAdapter.swapList(element.getFirstArtistList());
-            }
+    private final RealmChangeListener<ArtistListOwner> mArtistListChangeListener = (element) -> {
+        if (element.isValid() && element.isLoaded()) {
+            mAdapter.swapList(element.getFirstArtistList());
+            mBinding.swipeRefreshProgress.setRefreshing(false);
         }
     };
 
@@ -57,7 +57,8 @@ public class ArtistListFragment extends Fragment {
 
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
-            // ロードを待って表示したい場合はココで addChangeListener()
+            // ロードを待って表示したい場合はココで
+            addChangeListener();
         }
     };
 
@@ -89,6 +90,10 @@ public class ArtistListFragment extends Fragment {
         mAdapter = new ArtistListAdapter(getActivity(), null);
         mBinding.artistList.setAdapter(mAdapter);
 
+        mBinding.swipeRefreshProgress.setEnabled(false);
+        mBinding.swipeRefreshProgress.setColorSchemeColors(getResources().getColor(R.color.colorPrimaryDark));
+        mBinding.swipeRefreshProgress.setRefreshing(true);
+
         getLoaderManager().initLoader(ARTIST_LIST_LOADER_ID, null, artistListLoaderCallback);
     }
 
@@ -101,9 +106,19 @@ public class ArtistListFragment extends Fragment {
             mRealm = activity.getRealm();
 
             // Loader のロードを待たずに保存済のリスト表示をする場合ココで
-            addChangeListener();
+//            addChangeListener();
         } catch (ClassCastException e) {
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     @Override
