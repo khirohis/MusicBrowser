@@ -72,7 +72,7 @@ public class ArtistEntity extends RealmObject {
     public static ArtistEntity createOrFetch(Realm realm, String id) {
         ArtistEntity entity = queryById(realm, id).findFirst();
         if (entity == null) {
-            entity = realm.createObject(ArtistEntity.class, id);
+            entity = create(realm, id);
         }
 
         return entity;
