@@ -2,9 +2,11 @@ package net.hogelab.musicbrowser;
 
 import net.hogelab.musicbrowser.view.AlbumListActivity;
 import net.hogelab.musicbrowser.view.ArtistListActivity;
+import net.hogelab.musicbrowser.view.GenericDialogFragment;
 import net.hogelab.musicbrowser.view.TrackListActivity;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -30,7 +32,8 @@ public class MainActivity extends AppCompatActivity
 
     static final String TAG = MainActivity.class.getSimpleName();
 
-    static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 1;
+    static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 100;
+    static final int PROMPT_SETTING_CHANGE_DIALOG_REQUEST_CODE = 200;
 
     static boolean isInitialized;
 
@@ -78,6 +81,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PROMPT_SETTING_CHANGE_DIALOG_REQUEST_CODE) {
+            ActivityCompat.finishAffinity(this);
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         boolean granted = false;
 
@@ -95,8 +105,12 @@ public class MainActivity extends AppCompatActivity
             } else {
                 // 「今後は確認しない」がチェックされた模様
                 // なので諦める
-                MyAlertDialog dialog = MyAlertDialog.newInstance("設定で許可してください", "わかった");
-                dialog.show(getSupportFragmentManager(), null);
+                GenericDialogFragment.Builder builder = new GenericDialogFragment.Builder(
+                        PROMPT_SETTING_CHANGE_DIALOG_REQUEST_CODE)
+                        .setTitle("Alert")
+                        .setMessage("設定で許可してください")
+                        .setPositiveButton("わかった");
+                builder.show(getSupportFragmentManager());
             }
         }
     }
@@ -162,33 +176,5 @@ public class MainActivity extends AppCompatActivity
         // パーミッションをリクエスト
         String[] permissions = new String[] { READ_EXTERNAL_STORAGE };
         ActivityCompat.requestPermissions(this, permissions, READ_EXTERNAL_STORAGE_REQUEST_CODE);
-    }
-
-
-    public static class MyAlertDialog extends DialogFragment {
-
-        public static MyAlertDialog newInstance(String message, String positiveButton) {
-            Bundle args = new Bundle();
-            args.putString("message", message);
-            args.putString("positiveButton", positiveButton);
-
-            MyAlertDialog dialog = new MyAlertDialog();
-            dialog.setArguments(args);
-
-            return dialog;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            String message = getArguments().getString("message");
-            String positiveButton = getArguments().getString("positiveButton");
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("Alert!");
-            builder.setMessage(message);
-            builder.setPositiveButton(positiveButton, null);
-
-            return builder.create();
-        }
     }
 }
