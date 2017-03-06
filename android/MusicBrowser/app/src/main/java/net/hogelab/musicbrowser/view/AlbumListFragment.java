@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.FragmentAlbumListBinding;
 import net.hogelab.musicbrowser.model.AlbumListLoader;
 import net.hogelab.musicbrowser.model.entity.AlbumListOwner;
@@ -35,13 +36,10 @@ public class AlbumListFragment extends Fragment {
     private String mArtistId;
 
     private AlbumListOwner mListOwner;
-    private final RealmChangeListener<AlbumListOwner> mChangedListener = new RealmChangeListener<AlbumListOwner>() {
-
-        @Override
-        public void onChange(AlbumListOwner element) {
-            if (element.isValid() && element.isLoaded()) {
-                mAdapter.swapList(element.getFirstAlbumList());
-            }
+    private final RealmChangeListener<AlbumListOwner> mChangedListener = (element) -> {
+        if (element.isValid() && element.isLoaded()) {
+            mAdapter.swapList(element.getFirstAlbumList());
+            mBinding.swipeRefreshProgress.setRefreshing(false);
         }
     };
 
@@ -61,7 +59,8 @@ public class AlbumListFragment extends Fragment {
 
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
-            // ロードを待って表示したい場合はココで addChangeListener()
+            // ロードを待って表示したい場合はココで
+            addChangeListener(mArtistId);
         }
     };
 
@@ -105,6 +104,10 @@ public class AlbumListFragment extends Fragment {
         mAdapter = new AlbumListAdapter(getActivity(), null);
         mBinding.albumList.setAdapter(mAdapter);
 
+        mBinding.swipeRefreshProgress.setEnabled(false);
+        mBinding.swipeRefreshProgress.setColorSchemeColors(getResources().getColor(R.color.colorPrimaryDark));
+        mBinding.swipeRefreshProgress.setRefreshing(true);
+
         Bundle args = new Bundle();
         if (mArtistId != null) {
             args.putString(BUNDLE_ARTIST_ID_KEY, mArtistId);
@@ -121,7 +124,7 @@ public class AlbumListFragment extends Fragment {
             mRealm = activity.getRealm();
 
             // Loader のロードを待たずに保存済のリスト表示をする場合ココで
-            addChangeListener(mArtistId);
+//            addChangeListener(mArtistId);
         } catch (ClassCastException e) {
         }
     }
