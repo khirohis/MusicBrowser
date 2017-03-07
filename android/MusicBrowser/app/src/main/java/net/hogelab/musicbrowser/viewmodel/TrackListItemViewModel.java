@@ -5,7 +5,7 @@ import android.util.Log;
 import android.view.View;
 
 import net.hogelab.musicbrowser.R;
-import net.hogelab.musicbrowser.model.entity.Track;
+import net.hogelab.musicbrowser.model.entity.TrackEntity;
 
 /**
  * Created by kobayasi on 2016/04/18.
@@ -28,7 +28,7 @@ public class TrackListItemViewModel {
     private int track;
 
 
-    public TrackListItemViewModel(Context context, Track listItem) {
+    public TrackListItemViewModel(Context context, TrackEntity listItem) {
         this.context = context;
 
         setId(listItem.getId());

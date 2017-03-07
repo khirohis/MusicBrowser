@@ -4,11 +4,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
 
-import net.hogelab.musicbrowser.model.entity.Track;
-import net.hogelab.musicbrowser.model.entity.TrackList;
-
-import java.util.Date;
-import java.util.UUID;
+import net.hogelab.musicbrowser.model.entity.EntityHolder;
+import net.hogelab.musicbrowser.model.entity.EntityList;
+import net.hogelab.musicbrowser.model.entity.TrackEntity;
+import net.hogelab.musicbrowser.model.entity.TrackListOwner;
 
 import io.realm.Realm;
 
@@ -49,35 +48,33 @@ public class TrackListLoader extends MediaStoreToRealmLoader {
                 MediaStore.Audio.Media.TRACK);
 
         if (cursor != null) {
-            String listId = UUID.randomUUID().toString();
-            TrackList list = realm.createObject(TrackList.class, listId);
-            list.setCreationDate(new Date());
-            list.setParentId(mAlbumId);
-
+            EntityList entityList = EntityList.create(realm);
             while (cursor.moveToNext()) {
-                String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
-                Track entity = realm.where(Track.class).equalTo("id", id).findFirst();
-                if (entity == null) {
-                    entity = realm.createObject(Track.class, id);
-                }
+                String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID));
+                String data = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+                String title = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
+                long duration = Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)));
 
-                entity.setData(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)));
-                entity.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)));
-                entity.setDuration(Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION))));
+                String artistId = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST_ID));
+                String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
+                String composer = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.COMPOSER));
+                String albumId = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
+                String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+                int track = Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TRACK)));
 
-                entity.setArtistId(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST_ID)));
-                entity.setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)));
-                entity.setComposer(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.COMPOSER)));
-                entity.setAlbumId(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)));
-                entity.setAlbum(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)));
-                entity.setTrack(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TRACK))));
+                TrackEntity entity = TrackEntity.createOrUpdate(realm, id, data, title, duration,
+                        artistId, artist, composer, albumId, album, track);
 
-                list.getEntities().add(entity);
+                EntityHolder holder = EntityHolder.createWithTrack(realm, entity);
+                entityList.addHolder(holder);
             }
 
             cursor.close();
 
-            return listId;
+            TrackListOwner listOwner = TrackListOwner.createOrFetch(realm, mAlbumId);
+            listOwner.insertTrackList(entityList);
+
+            return listOwner.getId();
         }
 
         return null;
