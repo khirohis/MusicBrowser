@@ -72,7 +72,7 @@ public class AlbumEntity extends RealmObject {
     public static AlbumEntity createOrFetch(Realm realm, String id) {
         AlbumEntity entity = queryById(realm, id).findFirst();
         if (entity == null) {
-            entity = realm.createObject(AlbumEntity.class, id);
+            entity = create(realm, id);
         }
 
         return entity;

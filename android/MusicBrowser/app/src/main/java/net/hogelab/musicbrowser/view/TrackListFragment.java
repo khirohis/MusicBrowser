@@ -8,10 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.FragmentTrackListBinding;
 import net.hogelab.musicbrowser.model.TrackListLoader;
-import net.hogelab.musicbrowser.model.entity.TrackList;
-import net.hogelab.musicbrowser.model.entity.wrapper.TrackListWrapper;
+import net.hogelab.musicbrowser.model.entity.TrackListOwner;
 import net.hogelab.musicbrowser.viewmodel.TrackListViewModel;
 
 import io.realm.Realm;
@@ -34,14 +34,11 @@ public class TrackListFragment extends Fragment {
     private TrackListAdapter mAdapter;
     private String mAlbumId;
 
-    private TrackList mTrackList;
-    private final RealmChangeListener<TrackList> mChangedListener = new RealmChangeListener<TrackList>() {
-
-        @Override
-        public void onChange(TrackList element) {
-            if (element.isValid() && element.isLoaded()) {
-                mAdapter.swapListWrapper(new TrackListWrapper(element));
-            }
+    private TrackListOwner mListOwner;
+    private final RealmChangeListener<TrackListOwner> mChangedListener = (element) -> {
+        if (element.isValid() && element.isLoaded()) {
+            mAdapter.swapList(element.getFirstTrackList());
+            mBinding.swipeRefreshProgress.setRefreshing(false);
         }
     };
 
@@ -56,14 +53,12 @@ public class TrackListFragment extends Fragment {
 
         @Override
         public void onLoaderReset(Loader<String> loader) {
-            mAdapter.swapListWrapper(null);
+            mAdapter.swapList(null);
         }
 
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
-            if (data != null) {
-                addChangedListener(data);
-            }
+            addChangedListener(mAlbumId);
         }
     };
 
@@ -107,6 +102,10 @@ public class TrackListFragment extends Fragment {
         mAdapter = new TrackListAdapter(getActivity(), null);
         mBinding.trackList.setAdapter(mAdapter);
 
+        mBinding.swipeRefreshProgress.setEnabled(false);
+        mBinding.swipeRefreshProgress.setColorSchemeColors(getResources().getColor(R.color.colorPrimaryDark));
+        mBinding.swipeRefreshProgress.setRefreshing(true);
+
         Bundle args = new Bundle();
         if (mAlbumId != null) {
             args.putString(BUNDLE_ALBUM_ID_KEY, mAlbumId);
@@ -121,6 +120,9 @@ public class TrackListFragment extends Fragment {
         try {
             TrackListActivity activity = (TrackListActivity) getActivity();
             mRealm = activity.getRealm();
+
+            // Loader のロードを待たずに保存済のリスト表示をする場合ココで
+            // addChangedListener(mAlbumId);
         } catch (ClassCastException e) {
         }
     }
@@ -145,15 +147,15 @@ public class TrackListFragment extends Fragment {
         removeChangedListener();
 
         if (mRealm != null) {
-            mTrackList = mRealm.where(TrackList.class).equalTo("id", id).findFirstAsync();
-            mTrackList.addChangeListener(mChangedListener);
+            mListOwner = TrackListOwner.queryById(mRealm, id).findFirstAsync();
+            mListOwner.addChangeListener(mChangedListener);
         }
     }
 
     private void removeChangedListener() {
-        if (mTrackList != null) {
-            mTrackList.removeChangeListener(mChangedListener);
-            mTrackList = null;
+        if (mListOwner != null) {
+            mListOwner.removeChangeListener(mChangedListener);
+            mListOwner = null;
         }
     }
 }

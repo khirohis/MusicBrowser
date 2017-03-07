@@ -1,22 +1,21 @@
 package net.hogelab.musicbrowser;
 
 import net.hogelab.musicbrowser.promise.Sandbox;
+import net.hogelab.musicbrowser.databinding.ActivityMainBinding;
 import net.hogelab.musicbrowser.view.AlbumListActivity;
 import net.hogelab.musicbrowser.view.ArtistListActivity;
+import net.hogelab.musicbrowser.view.GenericDialogFragment;
 import net.hogelab.musicbrowser.view.TrackListActivity;
+import net.hogelab.musicbrowser.viewmodel.MainRootViewModel;
 
-import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,15 +30,19 @@ public class MainActivity extends AppCompatActivity
 
     static final String TAG = MainActivity.class.getSimpleName();
 
-    static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 1;
+    static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 100;
+    static final int PROMPT_SETTING_CHANGE_DIALOG_REQUEST_CODE = 200;
 
     static boolean isInitialized;
+
+    private ActivityMainBinding mBinding;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Realm DB を毎回削除してまっさらに
         if (!isInitialized) {
             Realm.init(getApplicationContext());
 
@@ -50,18 +53,23 @@ public class MainActivity extends AppCompatActivity
             isInitialized = true;
         }
 
-        setContentView(net.hogelab.musicbrowser.R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(net.hogelab.musicbrowser.R.id.toolbar);
-        setSupportActionBar(toolbar);
+        // inflate で View と Data Binding オブジェクトを生成
+        // ViewModel オブジェクトを Data Binding の変数に設定
+        // Root View を setContentView
+        // Data Binding が各 View の参照を持っているので必要なら適宜アトリビュート設定
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(net.hogelab.musicbrowser.R.id.drawer_layout);
+        mBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        mBinding.setViewModel(new MainRootViewModel());
+        setContentView(mBinding.getRoot());
+
+        setSupportActionBar(mBinding.appBarMain.toolbar);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, net.hogelab.musicbrowser.R.string.navigation_drawer_open, net.hogelab.musicbrowser.R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+                this, mBinding.drawerLayout, mBinding.appBarMain.toolbar, net.hogelab.musicbrowser.R.string.navigation_drawer_open, net.hogelab.musicbrowser.R.string.navigation_drawer_close);
+        mBinding.drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(net.hogelab.musicbrowser.R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mBinding.navView.setNavigationItemSelectedListener(this);
 
 //        Sandbox.doMain();
 
@@ -70,11 +78,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(net.hogelab.musicbrowser.R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (mBinding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mBinding.drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PROMPT_SETTING_CHANGE_DIALOG_REQUEST_CODE) {
+            ActivityCompat.finishAffinity(this);
         }
     }
 
@@ -96,8 +110,12 @@ public class MainActivity extends AppCompatActivity
             } else {
                 // 「今後は確認しない」がチェックされた模様
                 // なので諦める
-                MyAlertDialog dialog = MyAlertDialog.newInstance("設定で許可してください", "わかった");
-                dialog.show(getSupportFragmentManager(), null);
+                GenericDialogFragment.Builder builder = new GenericDialogFragment.Builder(
+                        PROMPT_SETTING_CHANGE_DIALOG_REQUEST_CODE)
+                        .setTitle("Alert")
+                        .setMessage("設定で許可してください")
+                        .setPositiveButton("わかった");
+                builder.show(getSupportFragmentManager());
             }
         }
     }
@@ -133,8 +151,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(TrackListActivity.newIntent(this));
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(net.hogelab.musicbrowser.R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        mBinding.drawerLayout.closeDrawer(GravityCompat.START);
 
         return true;
     }
@@ -163,33 +180,5 @@ public class MainActivity extends AppCompatActivity
         // パーミッションをリクエスト
         String[] permissions = new String[] { READ_EXTERNAL_STORAGE };
         ActivityCompat.requestPermissions(this, permissions, READ_EXTERNAL_STORAGE_REQUEST_CODE);
-    }
-
-
-    public static class MyAlertDialog extends DialogFragment {
-
-        public static MyAlertDialog newInstance(String message, String positiveButton) {
-            Bundle args = new Bundle();
-            args.putString("message", message);
-            args.putString("positiveButton", positiveButton);
-
-            MyAlertDialog dialog = new MyAlertDialog();
-            dialog.setArguments(args);
-
-            return dialog;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            String message = getArguments().getString("message");
-            String positiveButton = getArguments().getString("positiveButton");
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("Alert!");
-            builder.setMessage(message);
-            builder.setPositiveButton(positiveButton, null);
-
-            return builder.create();
-        }
     }
 }
