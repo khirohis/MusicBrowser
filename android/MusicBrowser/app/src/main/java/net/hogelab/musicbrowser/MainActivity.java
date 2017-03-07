@@ -1,9 +1,11 @@
 package net.hogelab.musicbrowser;
 
+import net.hogelab.musicbrowser.databinding.ActivityMainBinding;
 import net.hogelab.musicbrowser.view.AlbumListActivity;
 import net.hogelab.musicbrowser.view.ArtistListActivity;
 import net.hogelab.musicbrowser.view.GenericDialogFragment;
 import net.hogelab.musicbrowser.view.TrackListActivity;
+import net.hogelab.musicbrowser.viewmodel.MainRootViewModel;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -37,11 +39,14 @@ public class MainActivity extends AppCompatActivity
 
     static boolean isInitialized;
 
+    private ActivityMainBinding mBinding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Realm DB を毎回削除してまっさらに
         if (!isInitialized) {
             Realm.init(getApplicationContext());
 
@@ -52,18 +57,23 @@ public class MainActivity extends AppCompatActivity
             isInitialized = true;
         }
 
-        setContentView(net.hogelab.musicbrowser.R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(net.hogelab.musicbrowser.R.id.toolbar);
-        setSupportActionBar(toolbar);
+        // inflate で View と Data Binding オブジェクトを生成
+        // ViewModel オブジェクトを Data Binding の変数に設定
+        // Root View を setContentView
+        // Data Binding が各 View の参照を持っているので必要なら適宜アトリビュート設定
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(net.hogelab.musicbrowser.R.id.drawer_layout);
+        mBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        mBinding.setViewModel(new MainRootViewModel());
+        setContentView(mBinding.getRoot());
+
+        setSupportActionBar(mBinding.appBarMain.toolbar);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, net.hogelab.musicbrowser.R.string.navigation_drawer_open, net.hogelab.musicbrowser.R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+                this, mBinding.drawerLayout, mBinding.appBarMain.toolbar, net.hogelab.musicbrowser.R.string.navigation_drawer_open, net.hogelab.musicbrowser.R.string.navigation_drawer_close);
+        mBinding.drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(net.hogelab.musicbrowser.R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mBinding.navView.setNavigationItemSelectedListener(this);
 
 //        Sandbox.doMain();
 
@@ -72,9 +82,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(net.hogelab.musicbrowser.R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (mBinding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mBinding.drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -146,8 +155,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(TrackListActivity.newIntent(this));
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(net.hogelab.musicbrowser.R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        mBinding.drawerLayout.closeDrawer(GravityCompat.START);
 
         return true;
     }
