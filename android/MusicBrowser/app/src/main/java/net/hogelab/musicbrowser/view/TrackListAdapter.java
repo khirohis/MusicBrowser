@@ -16,6 +16,8 @@ import net.hogelab.musicbrowser.viewmodel.TrackListItemViewModel;
  */
 public class TrackListAdapter extends RecyclerViewEntityListAdapter {
 
+    private static final String TAG = TrackListAdapter.class.getSimpleName();
+
 
     public TrackListAdapter(Context context, EntityList listObject) {
         super(context, listObject);

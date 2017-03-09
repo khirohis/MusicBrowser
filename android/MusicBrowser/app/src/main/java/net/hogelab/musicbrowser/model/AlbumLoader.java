@@ -13,7 +13,11 @@ import io.realm.Realm;
  */
 
 public class AlbumLoader extends MediaStoreToRealmLoader {
+
+    private static final String TAG = AlbumLoader.class.getSimpleName();
+
     private String albumId;
+
 
     public AlbumLoader(Context context, String albumId) {
         super(context);

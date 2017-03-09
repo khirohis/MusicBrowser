@@ -24,11 +24,10 @@ import io.realm.Realm;
  * Created by kobayasi on 2016/04/11.
  */
 public class AlbumListActivity extends AppCompatActivity {
+
     private static final String TAG = AlbumListActivity.class.getSimpleName();
 
-
     private static final String BUNDLE_ARTIST_ID_KEY = "artistId";
-
     private static final int ARTIST_LOADER_ID = 1;
 
 
@@ -36,6 +35,12 @@ public class AlbumListActivity extends AppCompatActivity {
     private ActivityAlbumListBinding mBinding;
     private AlbumListRootViewModel mViewModel;
     private String mArtistId;
+    private ArtistEntity mArtist;
+    private final RealmChangeListener<ArtistEntity> mChangeListener = (element) -> {
+        if (element.isValid() && element.isLoaded()) {
+            mViewModel.setupFromArtist(element);
+        }
+    };
 
 
     public static Intent newIntent(Context context) {
@@ -95,12 +100,8 @@ public class AlbumListActivity extends AppCompatActivity {
         setContentView(mBinding.getRoot());
 
         mBinding.toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        mBinding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
+        mBinding.toolbar.setNavigationOnClickListener((view) -> {
+            finish();
         });
 
         Bundle extras = getIntent().getExtras();

@@ -11,7 +11,9 @@ import net.hogelab.musicbrowser.model.entity.ArtistEntity;
  * Created by kobayasi on 2016/04/11.
  */
 public class AlbumListRootViewModel extends BaseObservable {
+
     private static final String TAG = AlbumListRootViewModel.class.getSimpleName();
+
 
     private Context context;
 

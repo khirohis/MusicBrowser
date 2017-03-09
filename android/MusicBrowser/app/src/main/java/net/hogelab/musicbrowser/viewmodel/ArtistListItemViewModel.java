@@ -13,7 +13,9 @@ import net.hogelab.musicbrowser.model.entity.ArtistEntity;
  * Created by kobayasi on 2016/04/08.
  */
 public class ArtistListItemViewModel {
+
     private static final String TAG = ArtistListItemViewModel.class.getSimpleName();
+
 
     private Context context;
 
@@ -70,14 +72,9 @@ public class ArtistListItemViewModel {
     }
 
     public View.OnClickListener onClickListItem() {
-        return new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: " + artist);
-
-                EventBus.postMainLooper(new OpenArtistEvent(id));
-            }
+        return (view) ->{
+            Log.d(TAG, "onClick: " + artist);
+            EventBus.postMainLooper(new OpenArtistEvent(id));
         };
     }
 }

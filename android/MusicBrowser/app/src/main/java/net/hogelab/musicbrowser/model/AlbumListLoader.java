@@ -10,9 +10,6 @@ import net.hogelab.musicbrowser.model.entity.AlbumListOwner;
 import net.hogelab.musicbrowser.model.entity.EntityHolder;
 import net.hogelab.musicbrowser.model.entity.EntityList;
 
-import java.util.Date;
-import java.util.UUID;
-
 import io.realm.Realm;
 
 /**
@@ -20,6 +17,7 @@ import io.realm.Realm;
  */
 
 public class AlbumListLoader extends MediaStoreToRealmLoader {
+
     private static final String TAG = AlbumListLoader.class.getSimpleName();
 
     private final String mArtistId;

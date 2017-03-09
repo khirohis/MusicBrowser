@@ -3,6 +3,7 @@ package net.hogelab.musicbrowser.view;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +22,10 @@ import io.realm.RealmChangeListener;
  * Created by kobayasi on 2016/04/18.
  */
 public class TrackListFragment extends Fragment {
+
     private static final String TAG = TrackListFragment.class.getSimpleName();
 
-
     private static final String BUNDLE_ALBUM_ID_KEY = "albumId";
-
     private static final int TRACK_LIST_LOADER_ID = 1;
 
 
@@ -103,7 +103,8 @@ public class TrackListFragment extends Fragment {
         mBinding.trackList.setAdapter(mAdapter);
 
         mBinding.swipeRefreshProgress.setEnabled(false);
-        mBinding.swipeRefreshProgress.setColorSchemeColors(getResources().getColor(R.color.colorPrimaryDark));
+        mBinding.swipeRefreshProgress.setColorSchemeColors(
+                ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark));
         mBinding.swipeRefreshProgress.setRefreshing(true);
 
         Bundle args = new Bundle();

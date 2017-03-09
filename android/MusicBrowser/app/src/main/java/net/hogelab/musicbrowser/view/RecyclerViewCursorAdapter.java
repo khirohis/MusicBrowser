@@ -13,6 +13,8 @@ import android.view.ViewGroup;
  */
 public abstract class RecyclerViewCursorAdapter extends RecyclerView.Adapter<RecyclerViewCursorAdapter.BindingHolder> {
 
+    private static final String TAG = RecyclerViewCursorAdapter.class.getSimpleName();
+
 
     protected Context mContext;
     protected Cursor mCursor;
