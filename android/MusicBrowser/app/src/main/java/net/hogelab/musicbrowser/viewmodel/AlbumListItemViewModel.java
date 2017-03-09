@@ -13,7 +13,9 @@ import net.hogelab.musicbrowser.model.entity.AlbumEntity;
  * Created by kobayasi on 2016/04/11.
  */
 public class AlbumListItemViewModel {
+
     private static final String TAG = AlbumListItemViewModel.class.getSimpleName();
+
 
     private Context context;
 
@@ -75,14 +77,9 @@ public class AlbumListItemViewModel {
 
 
     public View.OnClickListener onClickListItem() {
-        return new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: " + album);
-
-                EventBus.postMainLooper(new OpenAlbumEvent(id));
-            }
+        return (view) -> {
+            Log.d(TAG, "onClick: " + album);
+            EventBus.postMainLooper(new OpenAlbumEvent(id));
         };
     }
 }

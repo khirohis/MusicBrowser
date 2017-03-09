@@ -12,7 +12,9 @@ import net.hogelab.musicbrowser.model.entity.AlbumEntity;
  * Created by kobayasi on 2016/04/18.
  */
 public class TrackListRootViewModel extends BaseObservable {
+
     private static final String TAG = AlbumListRootViewModel.class.getSimpleName();
+
 
     private Context context;
 

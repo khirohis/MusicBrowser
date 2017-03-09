@@ -26,11 +26,10 @@ import io.realm.Realm;
  * Created by kobayasi on 2016/04/11.
  */
 public class TrackListActivity extends AppCompatActivity {
+
     private static final String TAG = TrackListActivity.class.getSimpleName();
 
-
     private static final String BUNDLE_ALBUM_ID_KEY = "albumId";
-
     private static final int ALBUM_LOADER_ID = 1;
 
 
@@ -39,13 +38,9 @@ public class TrackListActivity extends AppCompatActivity {
     private TrackListRootViewModel mViewModel;
     private String mAlbumId;
     private AlbumEntity mAlbum;
-    private final RealmChangeListener<AlbumEntity> mChangeListener = new RealmChangeListener<AlbumEntity>() {
-
-        @Override
-        public void onChange(AlbumEntity element) {
-            if (element.isValid() && element.isLoaded()) {
-                mViewModel.setupFromAlbum(element);
-            }
+    private final RealmChangeListener<AlbumEntity> mChangeListener = (element) -> {
+        if (element.isValid() && element.isLoaded()) {
+            mViewModel.setupFromAlbum(element);
         }
     };
 
@@ -112,12 +107,8 @@ public class TrackListActivity extends AppCompatActivity {
         setContentView(mBinding.getRoot());
 
         mBinding.toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        mBinding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
+        mBinding.toolbar.setNavigationOnClickListener((view) -> {
+            finish();
         });
 
         Bundle extras = getIntent().getExtras();

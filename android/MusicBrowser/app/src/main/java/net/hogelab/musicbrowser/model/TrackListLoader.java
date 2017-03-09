@@ -16,6 +16,7 @@ import io.realm.Realm;
  */
 
 public class TrackListLoader extends MediaStoreToRealmLoader {
+
     private static final String TAG = TrackListLoader.class.getSimpleName();
 
     private final String mAlbumId;

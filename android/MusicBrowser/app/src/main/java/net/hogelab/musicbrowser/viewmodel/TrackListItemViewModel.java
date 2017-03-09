@@ -11,7 +11,9 @@ import net.hogelab.musicbrowser.model.entity.TrackEntity;
  * Created by kobayasi on 2016/04/18.
  */
 public class TrackListItemViewModel {
+
     private static final String TAG = TrackListItemViewModel.class.getSimpleName();
+
 
     private Context context;
 
@@ -132,12 +134,8 @@ public class TrackListItemViewModel {
 
 
     public View.OnClickListener onClickListItem() {
-        return new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: " + title);
-            }
+        return (view) -> {
+            Log.d(TAG, "onClick: " + title);
         };
     }
 }

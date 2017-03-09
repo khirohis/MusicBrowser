@@ -14,6 +14,8 @@ import net.hogelab.musicbrowser.viewmodel.AlbumListItemViewModel;
  */
 public class AlbumListAdapter extends RecyclerViewEntityListAdapter {
 
+    private static final String TAG = AlbumListAdapter.class.getSimpleName();
+
 
     public AlbumListAdapter(Context context, EntityList listObject) {
         super(context, listObject);

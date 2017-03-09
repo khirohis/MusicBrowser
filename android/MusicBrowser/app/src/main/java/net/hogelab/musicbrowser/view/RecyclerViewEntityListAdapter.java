@@ -17,6 +17,9 @@ import net.hogelab.musicbrowser.model.entity.EntityList;
 
 public abstract class RecyclerViewEntityListAdapter extends RecyclerView.Adapter<RecyclerViewEntityListAdapter.BindingHolder> {
 
+    private static final String TAG = RecyclerViewEntityListAdapter.class.getSimpleName();
+
+
     protected Context mContext;
     protected LayoutInflater mInflater;
 

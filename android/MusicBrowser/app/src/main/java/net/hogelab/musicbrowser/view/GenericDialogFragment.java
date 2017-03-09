@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +18,8 @@ import android.support.v7.app.AlertDialog;
  */
 
 public class GenericDialogFragment extends DialogFragment {
+
+    private static final String TAG = GenericDialogFragment.class.getSimpleName();
 
     private static final String EXTRA_KEY_REQUEST_CODE = "requestCode";
     private static final String EXTRA_KEY_TITLE = "title";
@@ -110,7 +113,7 @@ public class GenericDialogFragment extends DialogFragment {
 
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public @NonNull Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle arguments = getArguments();
         final int requestCode = arguments.getInt(EXTRA_KEY_REQUEST_CODE);
         final String title = arguments.getString(EXTRA_KEY_TITLE);

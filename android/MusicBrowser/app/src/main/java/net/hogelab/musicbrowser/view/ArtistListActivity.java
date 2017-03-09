@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
 import com.squareup.otto.Subscribe;
 
@@ -20,6 +19,7 @@ import io.realm.Realm;
  * Created by kobayasi on 2016/04/01.
  */
 public class ArtistListActivity extends AppCompatActivity {
+
     private static final String TAG = ArtistListActivity.class.getSimpleName();
 
 
@@ -48,12 +48,8 @@ public class ArtistListActivity extends AppCompatActivity {
         setContentView(mBinding.getRoot());
 
         mBinding.toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        mBinding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
+        mBinding.toolbar.setNavigationOnClickListener((view) -> {
+            finish();
         });
 
         if (savedInstanceState == null) {

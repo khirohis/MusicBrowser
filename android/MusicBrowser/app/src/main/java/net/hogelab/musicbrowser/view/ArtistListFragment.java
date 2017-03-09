@@ -1,12 +1,9 @@
 package net.hogelab.musicbrowser.view;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +21,8 @@ import io.realm.RealmChangeListener;
  * Created by kobayasi on 2016/04/01.
  */
 public class ArtistListFragment extends Fragment {
-    private static final String TAG = ArtistListFragment.class.getSimpleName();
 
+    private static final String TAG = ArtistListFragment.class.getSimpleName();
 
     private static final int ARTIST_LIST_LOADER_ID = 1;
 

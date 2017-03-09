@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +21,10 @@ import io.realm.RealmChangeListener;
  * Created by kobayasi on 2016/04/11.
  */
 public class AlbumListFragment extends Fragment {
+
     private static final String TAG = AlbumListFragment.class.getSimpleName();
 
-
     private static final String BUNDLE_ARTIST_ID_KEY = "artistId";
-
     private static final int ALBUM_LIST_LOADER_ID = 1;
 
 

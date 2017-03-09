@@ -23,12 +23,8 @@ public class EventBus {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             getBus().post(event);
         } else {
-            getMainLooperHandler().post(new Runnable() {
-
-                @Override
-                public void run() {
-                    getBus().post(event);
-                }
+            getMainLooperHandler().post(() -> {
+                getBus().post(event);
             });
         }
     }
