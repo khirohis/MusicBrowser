@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mBinding.drawerLayout, mBinding.appBarMain.toolbar, net.hogelab.musicbrowser.R.string.navigation_drawer_open, net.hogelab.musicbrowser.R.string.navigation_drawer_close);
-        mBinding.drawerLayout.setDrawerListener(toggle);
+        mBinding.drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
         mBinding.navView.setNavigationItemSelectedListener(this);
