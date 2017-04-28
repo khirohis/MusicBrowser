@@ -6,7 +6,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
@@ -15,7 +14,7 @@ import com.squareup.otto.Subscribe;
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.ActivityTrackListBinding;
 import net.hogelab.musicbrowser.event.EventBus;
-import net.hogelab.musicbrowser.event.OpenTrackEvent;
+import net.hogelab.musicbrowser.event.PlayTrackEvent;
 import net.hogelab.musicbrowser.model.AlbumLoader;
 import net.hogelab.musicbrowser.model.entity.AlbumEntity;
 import net.hogelab.musicbrowser.viewmodel.TrackListRootViewModel;
@@ -25,7 +24,7 @@ import io.realm.Realm;
 /**
  * Created by kobayasi on 2016/04/11.
  */
-public class TrackListActivity extends AppCompatActivity {
+public class TrackListActivity extends BaseActivity {
 
     private static final String TAG = TrackListActivity.class.getSimpleName();
 
@@ -155,8 +154,11 @@ public class TrackListActivity extends AppCompatActivity {
 
 
     @Subscribe
-    public void openTrack(OpenTrackEvent event) {
+    public void playTrack(PlayTrackEvent event) {
         Log.d(TAG, "Track ID: " + event.trackId);
+
+        startPlayTrack(event.trackId);
+        startActivity(PlayerActivity.newIntent(this));
     }
 
 
