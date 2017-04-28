@@ -3,10 +3,10 @@ package net.hogelab.musicbrowser.event;
 /**
  * Created by kobayasi on 2016/04/14.
  */
-public class OpenTrackEvent {
-    public final long trackId;
+public class PlayTrackEvent {
+    public final String trackId;
 
-    public OpenTrackEvent(long trackId) {
+    public PlayTrackEvent(String trackId) {
         this.trackId = trackId;
     }
 }

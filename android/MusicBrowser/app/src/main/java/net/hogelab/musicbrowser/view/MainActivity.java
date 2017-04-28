@@ -1,10 +1,7 @@
-package net.hogelab.musicbrowser;
+package net.hogelab.musicbrowser.view;
 
+import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.ActivityMainBinding;
-import net.hogelab.musicbrowser.view.AlbumListActivity;
-import net.hogelab.musicbrowser.view.ArtistListActivity;
-import net.hogelab.musicbrowser.view.GenericDialogFragment;
-import net.hogelab.musicbrowser.view.TrackListActivity;
 import net.hogelab.musicbrowser.viewmodel.MainRootViewModel;
 
 import android.content.Intent;
