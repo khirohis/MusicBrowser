@@ -9,9 +9,9 @@ import android.support.v4.content.CursorLoader;
  */
 public final class AudioMediaStoreCursorLoaderFactory {
 
-    public static final CursorLoader createArtistCursorLoader(Context context, long artistId) {
+    public static final CursorLoader createArtistCursorLoader(Context context, String artistId) {
         String selection = MediaStore.Audio.Artists._ID + "=?";
-        String[] selectionArgs = new String[] { Long.toString(artistId) };
+        String[] selectionArgs = new String[] { artistId };
 
         return new CursorLoader(context,
                 MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
@@ -31,9 +31,9 @@ public final class AudioMediaStoreCursorLoaderFactory {
     }
 
 
-    public static final CursorLoader createAlbumCursorLoader(Context context, long albumId) {
+    public static final CursorLoader createAlbumCursorLoader(Context context, String albumId) {
         String selection = MediaStore.Audio.Albums._ID + "=?";
-        String[] selectionArgs = new String[] { Long.toString(albumId) };
+        String[] selectionArgs = new String[] { albumId };
 
         return new CursorLoader(context,
                 MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
@@ -52,9 +52,9 @@ public final class AudioMediaStoreCursorLoaderFactory {
                 MediaStore.Audio.Albums.DEFAULT_SORT_ORDER);
     }
 
-    public static final CursorLoader createAlbumListCursorLoader(Context context, long artistId) {
+    public static final CursorLoader createAlbumListCursorLoader(Context context, String artistId) {
         return new CursorLoader(context,
-                MediaStore.Audio.Artists.Albums.getContentUri("external", artistId),
+                MediaStore.Audio.Artists.Albums.getContentUri("external", Long.parseLong(artistId)),
                 MediaStoreFieldsProjection.ALBUM_FIELDS_PROJECTION,
                 null,
                 null,
@@ -62,9 +62,9 @@ public final class AudioMediaStoreCursorLoaderFactory {
     }
 
 
-    public static final CursorLoader createTrackCursorLoader(Context context, long trackId) {
+    public static final CursorLoader createTrackCursorLoader(Context context, String trackId) {
         String selection = MediaStore.Audio.Media._ID + "=?";
-        String[] selectionArgs = new String[] { Long.toString(trackId) };
+        String[] selectionArgs = new String[] { trackId };
 
         return new CursorLoader(context,
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -85,9 +85,9 @@ public final class AudioMediaStoreCursorLoaderFactory {
                 MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
     }
 
-    public static final CursorLoader createTrackListCursorLoader(Context context, long albumId) {
+    public static final CursorLoader createTrackListCursorLoader(Context context, String albumId) {
         String selection = MediaStore.Audio.Media.ALBUM_ID + "=?";
-        String[] selectionArgs = new String[] { Long.toString(albumId) };
+        String[] selectionArgs = new String[] { albumId };
 
         return new CursorLoader(context,
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,

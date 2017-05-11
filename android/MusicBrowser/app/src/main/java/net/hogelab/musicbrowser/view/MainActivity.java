@@ -16,9 +16,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity
@@ -38,17 +35,6 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Realm DB を毎回削除してまっさらに
-        if (!isInitialized) {
-            Realm.init(getApplicationContext());
-
-            // delete
-            RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
-            Realm.deleteRealm(realmConfig);
-
-            isInitialized = true;
-        }
-
         // inflate で View と Data Binding オブジェクトを生成
         // ViewModel オブジェクトを Data Binding の変数に設定
         // Root View を setContentView
@@ -66,8 +52,6 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         mBinding.navView.setNavigationItemSelectedListener(this);
-
-//        Sandbox.doMain();
 
         checkPermission();
     }

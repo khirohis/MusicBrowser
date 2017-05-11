@@ -1,26 +1,25 @@
 package net.hogelab.musicbrowser.view;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.databinding.ViewDataBinding;
 
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.ListItemTrackBinding;
 import net.hogelab.musicbrowser.databinding.ListItemTrackHeaderBinding;
-import net.hogelab.musicbrowser.model.entity.EntityList;
-import net.hogelab.musicbrowser.model.entity.TrackEntity;
 import net.hogelab.musicbrowser.viewmodel.TrackListHeaderViewModel;
 import net.hogelab.musicbrowser.viewmodel.TrackListItemViewModel;
 
 /**
  * Created by kobayasi on 2016/04/18.
  */
-public class TrackListAdapter extends RecyclerViewEntityListAdapter {
+public class TrackListAdapter extends RecyclerViewCursorAdapter {
 
     private static final String TAG = TrackListAdapter.class.getSimpleName();
 
 
-    public TrackListAdapter(Context context, EntityList listObject) {
-        super(context, listObject);
+    public TrackListAdapter(Context context, Cursor cursor) {
+        super(context, cursor);
     }
 
 
@@ -38,7 +37,10 @@ public class TrackListAdapter extends RecyclerViewEntityListAdapter {
         if (viewHolder.getItemViewType() == R.layout.list_item_track_header) {
             setupHeaderDataBinding(viewHolder.dataBinding);
         } else {
-            super.onBindViewHolder(viewHolder, position - 1);
+            if (mCursor != null) {
+                mCursor.moveToPosition(position - 1);
+                setupDataBinding(viewHolder.dataBinding, mCursor, position);
+            }
         }
     }
 
@@ -48,12 +50,12 @@ public class TrackListAdapter extends RecyclerViewEntityListAdapter {
     }
 
     @Override
-    protected void setupDataBinding(ViewDataBinding dataBinding, Object listItem, int position) {
+    protected void setupDataBinding(ViewDataBinding dataBinding, Cursor cursor, int position) {
         ListItemTrackBinding binding = (ListItemTrackBinding) dataBinding;
 
         // clear immediate
         binding.thumbnail.setImageDrawable(null);
-        binding.setViewModel(new TrackListItemViewModel(mContext, (TrackEntity) listItem));
+        binding.setViewModel(new TrackListItemViewModel(mContext, cursor));
     }
 
     protected void setupHeaderDataBinding(ViewDataBinding dataBinding) {

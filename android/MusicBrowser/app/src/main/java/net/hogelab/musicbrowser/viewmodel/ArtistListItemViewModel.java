@@ -1,12 +1,13 @@
 package net.hogelab.musicbrowser.viewmodel;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenArtistEvent;
-import net.hogelab.musicbrowser.model.entity.ArtistEntity;
 
 
 /**
@@ -25,13 +26,20 @@ public class ArtistListItemViewModel {
     private int numberOfTracks;
 
 
-    public ArtistListItemViewModel(Context context, ArtistEntity listItem) {
+    public ArtistListItemViewModel(Context context, Cursor cursor) {
         this.context = context;
 
-        id = listItem.getId();
-        artist = listItem.getArtist();
-        numberOfAlbums = listItem.getNumberOfAlbums();
-        numberOfTracks = listItem.getNumberOfTracks();
+        setupFromCursor(cursor);
+    }
+
+
+    public void setupFromCursor(Cursor cursor) {
+        if (cursor != null) {
+            setId(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID)));
+            setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST)));
+            setNumberOfAlbums(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS))));
+            setNumberOfTracks(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS))));
+        }
     }
 
 

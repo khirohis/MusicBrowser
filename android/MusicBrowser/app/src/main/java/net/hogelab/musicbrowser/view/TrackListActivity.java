@@ -2,6 +2,7 @@ package net.hogelab.musicbrowser.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -15,11 +16,8 @@ import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.ActivityTrackListBinding;
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.PlayTrackEvent;
-import net.hogelab.musicbrowser.model.AlbumLoader;
-import net.hogelab.musicbrowser.model.entity.AlbumEntity;
+import net.hogelab.musicbrowser.model.AudioMediaStoreCursorLoaderFactory;
 import net.hogelab.musicbrowser.viewmodel.TrackListRootViewModel;
-
-import io.realm.Realm;
 
 /**
  * Created by kobayasi on 2016/04/11.
@@ -32,16 +30,9 @@ public class TrackListActivity extends BaseActivity {
     private static final int ALBUM_LOADER_ID = 1;
 
 
-    private Realm mRealm;
     private ActivityTrackListBinding mBinding;
     private TrackListRootViewModel mViewModel;
     private String mAlbumId;
-    private AlbumEntity mAlbum;
-    private final RealmChangeListener<AlbumEntity> mChangeListener = (element) -> {
-        if (element.isValid() && element.isLoaded()) {
-            mViewModel.setupFromAlbum(element);
-        }
-    };
 
 
     public static Intent newIntent(Context context) {
@@ -56,32 +47,26 @@ public class TrackListActivity extends BaseActivity {
     }
 
 
-    public Realm getRealm() {
-        return mRealm;
-    }
-
-
-    private final LoaderManager.LoaderCallbacks albumLoaderCallback = new LoaderManager.LoaderCallbacks<String>() {
+    private final LoaderManager.LoaderCallbacks albumLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
 
         @Override
-        public Loader<String> onCreateLoader(int id, Bundle args) {
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             final String albumId = args.getString(BUNDLE_ALBUM_ID_KEY);
             if (albumId != null) {
-                return new AlbumLoader(TrackListActivity.this, albumId);
+                return AudioMediaStoreCursorLoaderFactory.createAlbumCursorLoader(TrackListActivity.this, albumId);
             }
 
             return null;
         }
 
         @Override
-        public void onLoaderReset(Loader<String> loader) {
+        public void onLoaderReset(Loader<Cursor> loader) {
         }
 
         @Override
-        public void onLoadFinished(Loader<String> loader, String data) {
-            if (data != null) {
-                Album album = mRealm.where(Album.class).equalTo("id", data).findFirst();
-                mViewModel.setupFromAlbum(album);
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            if (data != null && data.moveToFirst()) {
+                mViewModel.setupFromCursor(data);
             }
         }
     };
@@ -90,8 +75,6 @@ public class TrackListActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mRealm = Realm.getDefaultInstance();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getDecorView().setSystemUiVisibility(
@@ -142,16 +125,6 @@ public class TrackListActivity extends BaseActivity {
         super.onPause();
     }
 
-    @Override
-    public void onDestroy() {
-        if (mRealm != null) {
-            mRealm.close();
-            mRealm = null;
-        }
-
-        super.onDestroy();
-    }
-
 
     @Subscribe
     public void playTrack(PlayTrackEvent event) {
@@ -159,22 +132,5 @@ public class TrackListActivity extends BaseActivity {
 
         startPlayTrack(event.trackId);
         startActivity(PlayerActivity.newIntent(this));
-    }
-
-
-    private void addChangeListener(String id) {
-        removeChangeListener();
-
-        if (mRealm != null && mAlbumId != null) {
-            mAlbum = AlbumEntity.queryById(mRealm, id).findFirstAsync();
-            mAlbum.addChangeListener(mChangeListener);
-        }
-    }
-
-    private void removeChangeListener() {
-        if (mAlbum != null) {
-            mAlbum.removeChangeListener(mChangeListener);
-            mAlbum = null;
-        }
     }
 }

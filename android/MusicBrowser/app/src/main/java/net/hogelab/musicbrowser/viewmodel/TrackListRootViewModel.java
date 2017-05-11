@@ -1,12 +1,13 @@
 package net.hogelab.musicbrowser.viewmodel;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.provider.MediaStore;
 
 import net.hogelab.musicbrowser.BR;
 import net.hogelab.musicbrowser.R;
-import net.hogelab.musicbrowser.model.entity.AlbumEntity;
 
 /**
  * Created by kobayasi on 2016/04/18.
@@ -24,19 +25,19 @@ public class TrackListRootViewModel extends BaseObservable {
     private String albumArt;
 
 
-    public TrackListRootViewModel(Context context, AlbumEntity album) {
+    public TrackListRootViewModel(Context context, Cursor cursor) {
         this.context = context;
 
-        setupFromAlbum(album);
+        setupFromCursor(cursor);
     }
 
 
-    public void setupFromAlbum(AlbumEntity album) {
-        if (album != null) {
-            setId(album.getId());
-            setAlbum(album.getAlbum());
-            setArtist(album.getArtist());
-            setAlbumArt(album.getAlbumArt());
+    public void setupFromCursor(Cursor cursor) {
+        if (cursor != null) {
+            setId(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID)));
+            setAlbum(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM)));
+            setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST)));
+            setAlbumArt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART)));
         }
     }
 

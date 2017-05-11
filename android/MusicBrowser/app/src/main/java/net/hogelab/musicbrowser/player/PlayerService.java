@@ -34,14 +34,14 @@ public class PlayerService extends Service {
     private final Handler mHandler = new PlayerServiceHandler();
     private Messenger mMessenger;
 
-    private PlayerNotificationManager mNotificationManager;
-
     private PlayerQueueManager mPlayerQueueManager;
     private PlayerQueueManager.Callback mPlayerQueueManagerCallback = new PlayerQueueManagerCallback();
     private PlayerManager mPlayerManager;
     private PlayerManager.Callback mPlayerManagerCallback = new PlayerManagerCallback();
 
     private MediaSessionCompat mSession;
+
+    private PlayerNotificationManager mNotificationManager;
 
 
     public static Intent newIntent(Context context) {
@@ -65,8 +65,6 @@ public class PlayerService extends Service {
 
         mMessenger = new Messenger(mHandler);
 
-        mNotificationManager = new PlayerNotificationManager(this);
-
         Context applicationContext = getApplicationContext();
         mPlayerQueueManager = new PlayerQueueManager(applicationContext, mPlayerQueueManagerCallback);
         mPlayerManager = new PlayerManager(applicationContext, mPlayerManagerCallback,
@@ -76,6 +74,8 @@ public class PlayerService extends Service {
         mSession.setCallback(mPlayerManager.getMediaSessionCallback());
         mSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
                 MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+
+        mNotificationManager = new PlayerNotificationManager(this);
     }
 
     @Override

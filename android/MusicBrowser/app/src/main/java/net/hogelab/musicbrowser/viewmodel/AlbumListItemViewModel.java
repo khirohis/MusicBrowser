@@ -1,13 +1,14 @@
 package net.hogelab.musicbrowser.viewmodel;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenAlbumEvent;
-import net.hogelab.musicbrowser.model.entity.AlbumEntity;
 
 /**
  * Created by kobayasi on 2016/04/11.
@@ -25,13 +26,20 @@ public class AlbumListItemViewModel {
     private String albumArt;
 
 
-    public AlbumListItemViewModel(Context context, AlbumEntity listItem) {
+    public AlbumListItemViewModel(Context context, Cursor cursor) {
         this.context = context;
 
-        setId(listItem.getId());
-        setAlbum(listItem.getAlbum());
-        setArtist(listItem.getArtist());
-        setAlbumArt(listItem.getAlbumArt());
+        setupFromCursor(cursor);
+    }
+
+
+    public void setupFromCursor(Cursor cursor) {
+        if (cursor != null) {
+            setId(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID)));
+            setAlbum(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM)));
+            setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST)));
+            setAlbumArt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART)));
+        }
     }
 
 
