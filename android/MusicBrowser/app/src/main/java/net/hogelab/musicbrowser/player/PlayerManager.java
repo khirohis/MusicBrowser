@@ -13,11 +13,6 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
-import net.hogelab.musicbrowser.model.entity.TrackEntity;
-
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
-
 /**
  * Created by kobayasi on 2017/04/25.
  */
@@ -55,23 +50,23 @@ public class PlayerManager {
 
 
     private void handlePlayFromMediaId(String mediaId, Bundle extras) {
-        Realm realm = Realm.getDefaultInstance();
-        TrackEntity entity = TrackEntity.queryById(realm, mediaId).findFirstAsync();
-        entity.addChangeListener(new RealmChangeListener<TrackEntity>() {
-            @Override
-            public void onChange(TrackEntity element) {
-                if (element.isValid() && element.isLoaded()) {
-                    Uri uri = Uri.parse(element.getData());
-                    MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
-                            .setMediaId(mediaId)
-                            .setTitle(element.getTitle())
-                            .setMediaUri(uri)
-                            .build();
-                    MediaSessionCompat.QueueItem queuItem = new MediaSessionCompat.QueueItem(description, element.getTrack());
-                    mPlayer.play(queuItem);
-                }
-            }
-        });
+//        Realm realm = Realm.getDefaultInstance();
+//        TrackEntity entity = TrackEntity.queryById(realm, mediaId).findFirstAsync();
+//        entity.addChangeListener(new RealmChangeListener<TrackEntity>() {
+//            @Override
+//            public void onChange(TrackEntity element) {
+//                if (element.isValid() && element.isLoaded()) {
+//                    Uri uri = Uri.parse(element.getData());
+//                    MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
+//                            .setMediaId(mediaId)
+//                            .setTitle(element.getTitle())
+//                            .setMediaUri(uri)
+//                            .build();
+//                    MediaSessionCompat.QueueItem queuItem = new MediaSessionCompat.QueueItem(description, element.getTrack());
+//                    mPlayer.play(queuItem);
+//                }
+//            }
+//        });
     }
 
 

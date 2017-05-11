@@ -1,5 +1,6 @@
 package net.hogelab.musicbrowser.view;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -10,12 +11,8 @@ import android.view.ViewGroup;
 
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.FragmentArtistListBinding;
-import net.hogelab.musicbrowser.model.ArtistListLoader;
-import net.hogelab.musicbrowser.model.entity.ArtistListOwner;
+import net.hogelab.musicbrowser.model.AudioMediaStoreCursorLoaderFactory;
 import net.hogelab.musicbrowser.viewmodel.ArtistListViewModel;
-
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
 
 /**
  * Created by kobayasi on 2016/04/01.
@@ -27,47 +24,31 @@ public class ArtistListFragment extends Fragment {
     private static final int ARTIST_LIST_LOADER_ID = 1;
 
 
-    private Realm mRealm;
     private FragmentArtistListBinding mBinding;
     private ArtistListAdapter mAdapter;
 
-    private ArtistListOwner mListOwner;
-    private final RealmChangeListener<ArtistListOwner> mArtistListChangeListener = (element) -> {
-        if (element.isValid() && element.isLoaded()) {
-            mAdapter.swapList(element.getFirstArtistList());
+    private final LoaderManager.LoaderCallbacks artistListLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            return AudioMediaStoreCursorLoaderFactory.createArtistListCursorLoader(getActivity());
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            mAdapter.swapCursor(null);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            mAdapter.swapCursor(data);
             mBinding.swipeRefreshProgress.setRefreshing(false);
-        }
-    };
-
-
-    private final LoaderManager.LoaderCallbacks artistListLoaderCallback = new LoaderManager.LoaderCallbacks<String>() {
-
-        @Override
-        public Loader<String> onCreateLoader(int id, Bundle args) {
-            return new ArtistListLoader(getContext());
-        }
-
-        @Override
-        public void onLoaderReset(Loader<String> loader) {
-            mAdapter.swapList(null);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<String> loader, String data) {
-            // ロードを待って表示したい場合はココで
-            addChangeListener();
         }
     };
 
 
     public static ArtistListFragment newInstance() {
         return new ArtistListFragment();
-    }
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
 
@@ -95,58 +76,9 @@ public class ArtistListFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        try {
-            ArtistListActivity activity = (ArtistListActivity) getActivity();
-            mRealm = activity.getRealm();
-
-            // Loader のロードを待たずに保存済のリスト表示をする場合ココで
-//            addChangeListener();
-        } catch (ClassCastException e) {
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        removeChangeListener();
-        mRealm = null;
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
 
         getLoaderManager().destroyLoader(ARTIST_LIST_LOADER_ID);
-    }
-
-
-    private void addChangeListener() {
-        removeChangeListener();
-
-        if (mRealm != null) {
-            mListOwner = ArtistListOwner.query(mRealm).findFirstAsync();
-            mListOwner.addChangeListener(mArtistListChangeListener);
-        }
-    }
-
-    private void removeChangeListener() {
-        if (mListOwner != null) {
-            mListOwner.removeChangeListener(mArtistListChangeListener);
-            mListOwner = null;
-        }
     }
 }

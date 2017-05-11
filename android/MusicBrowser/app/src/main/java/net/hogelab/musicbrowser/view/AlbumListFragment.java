@@ -1,5 +1,6 @@
 package net.hogelab.musicbrowser.view;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -10,12 +11,8 @@ import android.view.ViewGroup;
 
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.FragmentAlbumListBinding;
-import net.hogelab.musicbrowser.model.AlbumListLoader;
-import net.hogelab.musicbrowser.model.entity.AlbumListOwner;
+import net.hogelab.musicbrowser.model.AudioMediaStoreCursorLoaderFactory;
 import net.hogelab.musicbrowser.viewmodel.AlbumListViewModel;
-
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
 
 /**
  * Created by kobayasi on 2016/04/11.
@@ -28,37 +25,31 @@ public class AlbumListFragment extends Fragment {
     private static final int ALBUM_LIST_LOADER_ID = 1;
 
 
-    private Realm mRealm;
     private FragmentAlbumListBinding mBinding;
     private AlbumListAdapter mAdapter;
     private String mArtistId;
 
-    private AlbumListOwner mListOwner;
-    private final RealmChangeListener<AlbumListOwner> mChangedListener = (element) -> {
-        if (element.isValid() && element.isLoaded()) {
-            mAdapter.swapList(element.getFirstAlbumList());
-            mBinding.swipeRefreshProgress.setRefreshing(false);
-        }
-    };
-
-
-    private final LoaderManager.LoaderCallbacks albumListLoaderCallback = new LoaderManager.LoaderCallbacks<String>() {
+    private final LoaderManager.LoaderCallbacks albumListLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
 
         @Override
-        public Loader<String> onCreateLoader(int id, Bundle args) {
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             final String artistId = args.getString(BUNDLE_ARTIST_ID_KEY);
-            return new AlbumListLoader(getContext(), artistId);
+            if (artistId != null) {
+                return AudioMediaStoreCursorLoaderFactory.createAlbumListCursorLoader(getActivity(), artistId);
+            } else {
+                return AudioMediaStoreCursorLoaderFactory.createAlbumListCursorLoader(getActivity());
+            }
         }
 
         @Override
-        public void onLoaderReset(Loader<String> loader) {
-            mAdapter.swapList(null);
+        public void onLoaderReset(Loader<Cursor> loader) {
+            mAdapter.swapCursor(null);
         }
 
         @Override
-        public void onLoadFinished(Loader<String> loader, String data) {
-            // ロードを待って表示したい場合はココで
-            addChangeListener(mArtistId);
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            mAdapter.swapCursor(data);
+            mBinding.swipeRefreshProgress.setRefreshing(false);
         }
     };
 
@@ -114,48 +105,9 @@ public class AlbumListFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        try {
-            AlbumListActivity activity = (AlbumListActivity) getActivity();
-            mRealm = activity.getRealm();
-
-            // Loader のロードを待たずに保存済のリスト表示をする場合ココで
-//            addChangeListener(mArtistId);
-        } catch (ClassCastException e) {
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        removeChangeListener();
-        mRealm = null;
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
 
         getLoaderManager().destroyLoader(ALBUM_LIST_LOADER_ID);
-    }
-
-
-    private void addChangeListener(String id) {
-        removeChangeListener();
-
-        if (mRealm != null) {
-            mListOwner = AlbumListOwner.queryById(mRealm, id).findFirstAsync();
-            mListOwner.addChangeListener(mChangedListener);
-        }
-    }
-
-    private void removeChangeListener() {
-        if (mListOwner != null) {
-            mListOwner.removeChangeListener(mChangedListener);
-            mListOwner = null;
-        }
     }
 }

@@ -13,8 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.squareup.otto.Subscribe;
 
-import io.realm.Realm;
-
 /**
  * Created by kobayasi on 2016/04/01.
  */
@@ -23,7 +21,6 @@ public class ArtistListActivity extends AppCompatActivity {
     private static final String TAG = ArtistListActivity.class.getSimpleName();
 
 
-    private Realm mRealm;
     private ActivityArtistListBinding mBinding;
 
 
@@ -32,16 +29,9 @@ public class ArtistListActivity extends AppCompatActivity {
     }
 
 
-    public Realm getRealm() {
-        return mRealm;
-    }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mRealm = Realm.getDefaultInstance();
 
         mBinding = ActivityArtistListBinding.inflate(getLayoutInflater());
         mBinding.setViewModel(new ArtistListRootViewModel());
@@ -72,16 +62,6 @@ public class ArtistListActivity extends AppCompatActivity {
         EventBus.getBus().unregister(this);
 
         super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        if (mRealm != null) {
-            mRealm.close();
-            mRealm = null;
-        }
-
-        super.onDestroy();
     }
 
 

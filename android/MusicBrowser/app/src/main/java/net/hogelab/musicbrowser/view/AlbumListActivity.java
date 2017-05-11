@@ -2,6 +2,7 @@ package net.hogelab.musicbrowser.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -13,11 +14,8 @@ import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.ActivityAlbumListBinding;
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenAlbumEvent;
-import net.hogelab.musicbrowser.model.ArtistLoader;
-import net.hogelab.musicbrowser.model.entity.ArtistEntity;
+import net.hogelab.musicbrowser.model.AudioMediaStoreCursorLoaderFactory;
 import net.hogelab.musicbrowser.viewmodel.AlbumListRootViewModel;
-
-import io.realm.Realm;
 
 /**
  * Created by kobayasi on 2016/04/11.
@@ -30,16 +28,9 @@ public class AlbumListActivity extends AppCompatActivity {
     private static final int ARTIST_LOADER_ID = 1;
 
 
-    private Realm mRealm;
     private ActivityAlbumListBinding mBinding;
     private AlbumListRootViewModel mViewModel;
     private String mArtistId;
-    private ArtistEntity mArtist;
-    private final RealmChangeListener<ArtistEntity> mChangeListener = (element) -> {
-        if (element.isValid() && element.isLoaded()) {
-            mViewModel.setupFromArtist(element);
-        }
-    };
 
 
     public static Intent newIntent(Context context) {
@@ -54,32 +45,26 @@ public class AlbumListActivity extends AppCompatActivity {
     }
 
 
-    public Realm getRealm() {
-        return mRealm;
-    }
-
-
-    private final LoaderManager.LoaderCallbacks artistLoaderCallback = new LoaderManager.LoaderCallbacks<String>() {
+    private final LoaderManager.LoaderCallbacks artistLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
 
         @Override
-        public Loader<String> onCreateLoader(int id, Bundle args) {
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             final String artistId = args.getString(BUNDLE_ARTIST_ID_KEY);
             if (artistId != null) {
-                return new ArtistLoader(AlbumListActivity.this, artistId);
+                return AudioMediaStoreCursorLoaderFactory.createArtistCursorLoader(AlbumListActivity.this, artistId);
             }
 
             return null;
         }
 
         @Override
-        public void onLoaderReset(Loader<String> loader) {
+        public void onLoaderReset(Loader<Cursor> loader) {
         }
 
         @Override
-        public void onLoadFinished(Loader<String> loader, String data) {
-            if (data != null) {
-                ArtistEntity artist = mRealm.where(ArtistEntity.class).equalTo("id", data).findFirst();
-                mViewModel.setupFromArtist(artist);
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            if (data != null && data.moveToFirst()) {
+                mViewModel.setupFromCursor(data);
             }
         }
     };
@@ -88,8 +73,6 @@ public class AlbumListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mRealm = Realm.getDefaultInstance();
 
         mViewModel = new AlbumListRootViewModel(this, null);
 
@@ -133,16 +116,6 @@ public class AlbumListActivity extends AppCompatActivity {
         EventBus.getBus().unregister(this);
 
         super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        if (mRealm != null) {
-            mRealm.close();
-            mRealm = null;
-        }
-
-        super.onDestroy();
     }
 
 

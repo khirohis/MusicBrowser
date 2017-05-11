@@ -1,24 +1,23 @@
 package net.hogelab.musicbrowser.view;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.databinding.ViewDataBinding;
 
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.ListItemAlbumBinding;
-import net.hogelab.musicbrowser.model.entity.AlbumEntity;
-import net.hogelab.musicbrowser.model.entity.EntityList;
 import net.hogelab.musicbrowser.viewmodel.AlbumListItemViewModel;
 
 /**
  * Created by kobayasi on 2016/04/11.
  */
-public class AlbumListAdapter extends RecyclerViewEntityListAdapter {
+public class AlbumListAdapter extends RecyclerViewCursorAdapter {
 
     private static final String TAG = AlbumListAdapter.class.getSimpleName();
 
 
-    public AlbumListAdapter(Context context, EntityList listObject) {
-        super(context, listObject);
+    public AlbumListAdapter(Context context, Cursor cursor) {
+        super(context, cursor);
     }
 
 
@@ -28,11 +27,11 @@ public class AlbumListAdapter extends RecyclerViewEntityListAdapter {
     }
 
     @Override
-    public void setupDataBinding(ViewDataBinding dataBinding, Object listItem, int position) {
+    public void setupDataBinding(ViewDataBinding dataBinding, Cursor cursor, int position) {
         ListItemAlbumBinding binding = (ListItemAlbumBinding) dataBinding;
 
         // clear immediate
         binding.thumbnail.setImageDrawable(null);
-        binding.setViewModel(new AlbumListItemViewModel(mContext, (AlbumEntity) listItem));
+        binding.setViewModel(new AlbumListItemViewModel(mContext, cursor));
     }
 }
