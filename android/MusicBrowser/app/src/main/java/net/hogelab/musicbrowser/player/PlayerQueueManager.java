@@ -14,7 +14,7 @@ import java.util.List;
 public class PlayerQueueManager {
     private static final String TAG = PlayerQueueManager.class.getSimpleName();
 
-    private final Context mApplicationContext;
+    private final Context mContext;
     private final Callback mCallback;
 
     // TODO: 同期
@@ -26,8 +26,8 @@ public class PlayerQueueManager {
     private int mPlayingIndex;
 
 
-    public PlayerQueueManager(Context applicationContext, Callback callback) {
-        mApplicationContext = applicationContext;
+    public PlayerQueueManager(Context context, Callback callback) {
+        mContext = context;
         mCallback = callback;
     }
 
@@ -46,7 +46,7 @@ public class PlayerQueueManager {
         mPlayingQueueIndex.add(0);
         mPlayingIndex = 0;
 
-        mCallback.onQueueUpdated(item.getDescription().getTitle(), mMasterQueue);
+        mCallback.onPlayerQueueUpdated(item.getDescription().getTitle(), mMasterQueue);
         mCallback.onCurrentIndexUpdated(mMasterIndex);
     }
 
@@ -77,7 +77,7 @@ public class PlayerQueueManager {
     }
 
     public interface Callback {
-        void onQueueUpdated(CharSequence queueTitle, List<MediaSessionCompat.QueueItem> queue);
+        void onPlayerQueueUpdated(CharSequence queueTitle, List<MediaSessionCompat.QueueItem> queue);
         void onCurrentIndexUpdated(int index);
         void onMetadataChanged(MediaMetadataCompat metadata);
     }

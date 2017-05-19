@@ -17,14 +17,14 @@ public class SystemPlayer implements Player {
 
     // TODO: audio focus control, wifi lock
 
-    private final Context mApplicationContext;
+    private final Context mContext;
     private Callback mCallback;
 
     private MediaPlayer mMediaPlayer;
 
 
-    public SystemPlayer(Context applicationContext) {
-        mApplicationContext = applicationContext;
+    public SystemPlayer(Context context) {
+        mContext = context;
     }
 
 
@@ -53,7 +53,7 @@ public class SystemPlayer implements Player {
         setupMediaPlayer();
 
         try {
-            mMediaPlayer.setDataSource(mApplicationContext, item.getDescription().getMediaUri());
+            mMediaPlayer.setDataSource(mContext, item.getDescription().getMediaUri());
             mMediaPlayer.prepareAsync();
         } catch (IOException e) {
         }
@@ -64,7 +64,7 @@ public class SystemPlayer implements Player {
         if (mMediaPlayer == null) {
             mMediaPlayer = new MediaPlayer();
 
-            mMediaPlayer.setWakeMode(mApplicationContext,
+            mMediaPlayer.setWakeMode(mContext.getApplicationContext(),
                     PowerManager.PARTIAL_WAKE_LOCK);
 
             mMediaPlayer.setOnPreparedListener(mOnPreparedListener);

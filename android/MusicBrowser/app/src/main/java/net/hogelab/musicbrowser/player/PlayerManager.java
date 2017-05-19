@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.support.v4.media.MediaDescriptionCompat;
@@ -13,6 +15,8 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
+import java.util.List;
+
 /**
  * Created by kobayasi on 2017/04/25.
  */
@@ -20,10 +24,13 @@ import android.util.Log;
 public class PlayerManager {
     private static final String TAG = PlayerManager.class.getSimpleName();
 
-    private final Context mApplicationContext;
+    private final Context mContext;
     private final Callback mCallback;
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
+
     private final MediaSessionCallback mMediaSessionCallback = new MediaSessionCallback();
 
+    private PlayerQueueFactory mPlayerQueueFactory = new AudioMediaStoreQueueFactory();
     private final PlayerQueueManager mPlayerQueueManager;
     private Player mPlayer;
     private final Player.Callback mPlayerCallback = new PlayerCallback();
@@ -31,16 +38,21 @@ public class PlayerManager {
     private final WifiManager.WifiLock mWifiLock;
 
 
-    public PlayerManager(Context applicationContext, Callback callback, PlayerQueueManager queueManager, Player player) {
-        mApplicationContext = applicationContext;
+    public PlayerManager(Context context, Callback callback, PlayerQueueManager queueManager, Player player) {
+        mContext = context;
         mCallback = callback;
 
         mPlayerQueueManager = queueManager;
         mPlayer = player;
         mPlayer.setPlayerCallback(mPlayerCallback);
 
-        mWifiLock = ((WifiManager) mApplicationContext.getSystemService(Context.WIFI_SERVICE))
+        mWifiLock = ((WifiManager) context.getSystemService(Context.WIFI_SERVICE))
                 .createWifiLock(WifiManager.WIFI_MODE_FULL, "musicbrowser_lock");
+    }
+
+
+    public void setQueueFactory(PlayerQueueFactory factory) {
+        mPlayerQueueFactory = factory;
     }
 
 
@@ -50,23 +62,18 @@ public class PlayerManager {
 
 
     private void handlePlayFromMediaId(String mediaId, Bundle extras) {
-//        Realm realm = Realm.getDefaultInstance();
-//        TrackEntity entity = TrackEntity.queryById(realm, mediaId).findFirstAsync();
-//        entity.addChangeListener(new RealmChangeListener<TrackEntity>() {
-//            @Override
-//            public void onChange(TrackEntity element) {
-//                if (element.isValid() && element.isLoaded()) {
-//                    Uri uri = Uri.parse(element.getData());
-//                    MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
-//                            .setMediaId(mediaId)
-//                            .setTitle(element.getTitle())
-//                            .setMediaUri(uri)
-//                            .build();
-//                    MediaSessionCompat.QueueItem queuItem = new MediaSessionCompat.QueueItem(description, element.getTrack());
-//                    mPlayer.play(queuItem);
-//                }
-//            }
-//        });
+        mPlayerQueueFactory.createQueueFromMediaId(mediaId, extras, new PlayerQueueFactory.SuccessCallback() {
+            @Override
+            public void onSuccess(List<MediaSessionCompat.QueueItem> queue) {
+                // TODO: TEST
+                mPlayer.play(queue.get(0));
+            }
+        }, new PlayerQueueFactory.FailureCallback() {
+            @Override
+            public void onFailure() {
+                // TODO: error handling
+            }
+        }, mHandler);
     }
 
 
