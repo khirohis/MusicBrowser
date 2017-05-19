@@ -14,7 +14,7 @@ import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.ActivityAlbumListBinding;
 import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenAlbumEvent;
-import net.hogelab.musicbrowser.model.AudioMediaStoreCursorLoaderFactory;
+import net.hogelab.musicbrowser.model.AudioMediaStoreCursorFactory;
 import net.hogelab.musicbrowser.viewmodel.AlbumListRootViewModel;
 
 /**
@@ -51,7 +51,7 @@ public class AlbumListActivity extends AppCompatActivity {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             final String artistId = args.getString(BUNDLE_ARTIST_ID_KEY);
             if (artistId != null) {
-                return AudioMediaStoreCursorLoaderFactory.createArtistCursorLoader(AlbumListActivity.this, artistId);
+                return AudioMediaStoreCursorFactory.createArtistCursorLoader(AlbumListActivity.this, artistId);
             }
 
             return null;
@@ -63,7 +63,7 @@ public class AlbumListActivity extends AppCompatActivity {
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            if (data != null && data.moveToFirst()) {
+            if (data != null && data.moveToNext()) {
                 mViewModel.setupFromCursor(data);
             }
         }

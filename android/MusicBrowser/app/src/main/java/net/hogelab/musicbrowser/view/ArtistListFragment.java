@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.FragmentArtistListBinding;
-import net.hogelab.musicbrowser.model.AudioMediaStoreCursorLoaderFactory;
+import net.hogelab.musicbrowser.model.AudioMediaStoreCursorFactory;
 import net.hogelab.musicbrowser.viewmodel.ArtistListViewModel;
 
 /**
@@ -31,7 +31,7 @@ public class ArtistListFragment extends Fragment {
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            return AudioMediaStoreCursorLoaderFactory.createArtistListCursorLoader(getActivity());
+            return AudioMediaStoreCursorFactory.createAllArtistListCursorLoader(getActivity());
         }
 
         @Override

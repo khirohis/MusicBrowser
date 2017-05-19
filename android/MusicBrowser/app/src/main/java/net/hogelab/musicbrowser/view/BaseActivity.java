@@ -77,9 +77,9 @@ public class BaseActivity extends AppCompatActivity {
 
 
     protected void startPlayTrack(String trackId) {
-        MediaControllerCompat controller = getSupportMediaController();
-        if (controller != null) {
-            controller.getTransportControls().playFromMediaId(trackId, null);
+        MediaControllerCompat mediaController = MediaControllerCompat.getMediaController(this);
+        if (mediaController != null) {
+            mediaController.getTransportControls().playFromMediaId(trackId, null);
         }
     }
 

@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.FragmentAlbumListBinding;
-import net.hogelab.musicbrowser.model.AudioMediaStoreCursorLoaderFactory;
+import net.hogelab.musicbrowser.model.AudioMediaStoreCursorFactory;
 import net.hogelab.musicbrowser.viewmodel.AlbumListViewModel;
 
 /**
@@ -35,9 +35,9 @@ public class AlbumListFragment extends Fragment {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             final String artistId = args.getString(BUNDLE_ARTIST_ID_KEY);
             if (artistId != null) {
-                return AudioMediaStoreCursorLoaderFactory.createAlbumListCursorLoader(getActivity(), artistId);
+                return AudioMediaStoreCursorFactory.createArtistAlbumListCursorLoader(getActivity(), artistId);
             } else {
-                return AudioMediaStoreCursorLoaderFactory.createAlbumListCursorLoader(getActivity());
+                return AudioMediaStoreCursorFactory.createAllAlbumListCursorLoader(getActivity());
             }
         }
 

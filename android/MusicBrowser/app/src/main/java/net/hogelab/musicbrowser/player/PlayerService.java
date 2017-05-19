@@ -66,8 +66,8 @@ public class PlayerService extends Service {
         mMessenger = new Messenger(mHandler);
 
         Context applicationContext = getApplicationContext();
-        mPlayerQueueManager = new PlayerQueueManager(applicationContext, mPlayerQueueManagerCallback);
-        mPlayerManager = new PlayerManager(applicationContext, mPlayerManagerCallback,
+        mPlayerQueueManager = new PlayerQueueManager(this, mPlayerQueueManagerCallback);
+        mPlayerManager = new PlayerManager(this, mPlayerManagerCallback,
                 mPlayerQueueManager, new SystemPlayer(applicationContext));
 
         mSession = new MediaSessionCompat(this, "PlayerService");
@@ -164,7 +164,7 @@ public class PlayerService extends Service {
     private class PlayerQueueManagerCallback implements  PlayerQueueManager.Callback {
 
         @Override
-        public void onQueueUpdated(CharSequence queueTitle, List<MediaSessionCompat.QueueItem> queue) {
+        public void onPlayerQueueUpdated(CharSequence queueTitle, List<MediaSessionCompat.QueueItem> queue) {
             mSession.setQueue(queue);
             mSession.setQueueTitle(queueTitle);
         }
