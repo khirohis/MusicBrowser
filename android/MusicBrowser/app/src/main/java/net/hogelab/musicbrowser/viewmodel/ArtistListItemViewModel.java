@@ -6,7 +6,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 
-import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenArtistEvent;
 
 
@@ -82,7 +81,7 @@ public class ArtistListItemViewModel {
     public View.OnClickListener onClickListItem() {
         return (view) ->{
             Log.d(TAG, "onClick: " + artist);
-            EventBus.postMainLooper(new OpenArtistEvent(id));
+//            EventBus.postMainLooper(new OpenArtistEvent(id));
         };
     }
 }

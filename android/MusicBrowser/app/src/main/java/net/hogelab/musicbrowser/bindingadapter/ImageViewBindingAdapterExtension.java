@@ -4,7 +4,8 @@ import android.content.Context;
 import android.databinding.BindingAdapter;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 /**
  * Created by kobayasi on 2016/04/08.
@@ -21,7 +22,10 @@ public class ImageViewBindingAdapterExtension {
         if (imageUrl != null) {
             Context context = imageView.getContext();
             if (context != null) {
-                Picasso.with(context).load(imageUrl).into(imageView);
+                Glide.with(imageView)
+                        .load(imageUrl)
+                        .apply(RequestOptions.centerCropTransform())
+                        .into(imageView);
             }
         }
     }

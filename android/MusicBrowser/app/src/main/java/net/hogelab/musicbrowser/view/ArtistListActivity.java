@@ -2,7 +2,6 @@ package net.hogelab.musicbrowser.view;
 
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.ActivityArtistListBinding;
-import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenArtistEvent;
 import net.hogelab.musicbrowser.viewmodel.ArtistListRootViewModel;
 
@@ -11,7 +10,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.squareup.otto.Subscribe;
 
 /**
  * Created by kobayasi on 2016/04/01.
@@ -54,18 +52,18 @@ public class ArtistListActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        EventBus.getBus().register(this);
+//        EventBus.getBus().register(this);
     }
 
     @Override
     public void onPause() {
-        EventBus.getBus().unregister(this);
+//        EventBus.getBus().unregister(this);
 
         super.onPause();
     }
 
 
-    @Subscribe
+//    @Subscribe
     public void openArtist(OpenArtistEvent event) {
         startActivity(AlbumListActivity.newIntent(this, event.artistId));
     }

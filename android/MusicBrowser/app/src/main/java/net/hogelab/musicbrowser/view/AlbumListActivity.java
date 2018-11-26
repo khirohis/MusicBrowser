@@ -8,11 +8,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 
-import com.squareup.otto.Subscribe;
-
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.ActivityAlbumListBinding;
-import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenAlbumEvent;
 import net.hogelab.musicbrowser.model.AudioMediaStoreCursorFactory;
 import net.hogelab.musicbrowser.viewmodel.AlbumListRootViewModel;
@@ -108,18 +105,18 @@ public class AlbumListActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        EventBus.getBus().register(this);
+//        EventBus.getBus().register(this);
     }
 
     @Override
     public void onPause() {
-        EventBus.getBus().unregister(this);
+//        EventBus.getBus().unregister(this);
 
         super.onPause();
     }
 
 
-    @Subscribe
+//    @Subscribe
     public void openAlbum(OpenAlbumEvent event) {
         startActivity(TrackListActivity.newIntent(this, event.albumId));
     }

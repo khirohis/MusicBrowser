@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 
 import net.hogelab.musicbrowser.R;
-import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.OpenAlbumEvent;
 
 /**
@@ -87,7 +86,7 @@ public class AlbumListItemViewModel {
     public View.OnClickListener onClickListItem() {
         return (view) -> {
             Log.d(TAG, "onClick: " + album);
-            EventBus.postMainLooper(new OpenAlbumEvent(id));
+//            EventBus.postMainLooper(new OpenAlbumEvent(id));
         };
     }
 }
