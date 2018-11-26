@@ -10,11 +10,9 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
 
-import com.squareup.otto.Subscribe;
 
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.databinding.ActivityTrackListBinding;
-import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.PlayTrackEvent;
 import net.hogelab.musicbrowser.model.AudioMediaStoreCursorFactory;
 import net.hogelab.musicbrowser.viewmodel.TrackListRootViewModel;
@@ -115,18 +113,18 @@ public class TrackListActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
 
-        EventBus.getBus().register(this);
+//        EventBus.getBus().register(this);
     }
 
     @Override
     public void onPause() {
-        EventBus.getBus().unregister(this);
+//        EventBus.getBus().unregister(this);
 
         super.onPause();
     }
 
 
-    @Subscribe
+//    @Subscribe
     public void playTrack(PlayTrackEvent event) {
         Log.d(TAG, "Track ID: " + event.trackId);
 

@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 
 import net.hogelab.musicbrowser.R;
-import net.hogelab.musicbrowser.event.EventBus;
 import net.hogelab.musicbrowser.event.PlayTrackEvent;
 
 /**
@@ -146,7 +145,7 @@ public class TrackListItemViewModel {
     public View.OnClickListener onClickListItem() {
         return (view) -> {
             Log.d(TAG, "onClick: " + title);
-            EventBus.postMainLooper(new PlayTrackEvent(id));
+//            EventBus.postMainLooper(new PlayTrackEvent(id));
         };
     }
 }

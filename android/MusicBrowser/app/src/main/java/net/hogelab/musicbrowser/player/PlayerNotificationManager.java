@@ -8,13 +8,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.app.NotificationCompat.MediaStyle;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 /**
@@ -175,7 +176,7 @@ public class PlayerNotificationManager extends BroadcastReceiver {
             builder.addAction(android.R.drawable.ic_media_next, "Skip To Next", mSkipToNextIntent);
         }
 
-        NotificationCompat.MediaStyle mediaStyle = new NotificationCompat.MediaStyle();
+        MediaStyle mediaStyle = new MediaStyle();
         mediaStyle.setMediaSession(mSessionToken)
                 .setShowActionsInCompactView(0, 1, 2);
         builder.setStyle(mediaStyle);
