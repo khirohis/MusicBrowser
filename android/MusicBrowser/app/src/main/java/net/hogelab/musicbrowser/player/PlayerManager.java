@@ -62,7 +62,7 @@ public class PlayerManager {
 
 
     private void handlePlayFromMediaId(String mediaId, Bundle extras) {
-        mPlayerQueueFactory.createQueueFromMediaId(mediaId, extras, new PlayerQueueFactory.SuccessCallback() {
+        mPlayerQueueFactory.createQueueFromMediaId(mContext, mediaId, extras, new PlayerQueueFactory.SuccessCallback() {
             @Override
             public void onSuccess(List<MediaSessionCompat.QueueItem> queue) {
                 // TODO: TEST
