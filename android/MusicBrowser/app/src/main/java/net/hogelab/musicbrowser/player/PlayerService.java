@@ -161,7 +161,7 @@ public class PlayerService extends Service {
     }
 
 
-    private class PlayerQueueManagerCallback implements  PlayerQueueManager.Callback {
+    private class PlayerQueueManagerCallback implements PlayerQueueManager.Callback {
 
         @Override
         public void onPlayerQueueUpdated(CharSequence queueTitle, List<MediaSessionCompat.QueueItem> queue) {

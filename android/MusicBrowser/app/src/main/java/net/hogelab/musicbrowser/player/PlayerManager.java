@@ -95,6 +95,8 @@ public class PlayerManager {
     }
 
     private void handleStatusChanged(int status) {
+        // TODO: 仮
+        mCallback.onStartPlay();
     }
 
     private void handleError(String error) {
