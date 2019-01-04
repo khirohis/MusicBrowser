@@ -16,6 +16,7 @@ import android.support.v4.media.app.NotificationCompat.MediaStyle;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+
 import android.util.Log;
 
 /**
@@ -27,6 +28,7 @@ public class PlayerNotificationManager extends BroadcastReceiver {
 
     private static final int NOTIFICATION_ID = 10000;
     private static final int REQUEST_CODE = 10000;
+    private static final String PLAYER_NOTIFICATION_CHANNEL_ID = "player_notification_channel_id";
 
     public static final String ACTION_PLAY = "net.hogelab.musicbrowser.player.action.PLAY";
     public static final String ACTION_STOP = "net.hogelab.musicbrowser.player.action.STOP";
@@ -154,7 +156,7 @@ public class PlayerNotificationManager extends BroadcastReceiver {
 
 
     private Notification createNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(mService);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mService, PLAYER_NOTIFICATION_CHANNEL_ID);
 
         long actions = mPlaybackState.getActions();
         if ((actions & PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) != 0) {

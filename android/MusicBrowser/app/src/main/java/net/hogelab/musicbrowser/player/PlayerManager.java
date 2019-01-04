@@ -62,7 +62,7 @@ public class PlayerManager {
 
 
     private void handlePlayFromMediaId(String mediaId, Bundle extras) {
-        mPlayerQueueFactory.createQueueFromMediaId(mediaId, extras, new PlayerQueueFactory.SuccessCallback() {
+        mPlayerQueueFactory.createQueueFromMediaId(mContext, mediaId, extras, new PlayerQueueFactory.SuccessCallback() {
             @Override
             public void onSuccess(List<MediaSessionCompat.QueueItem> queue) {
                 // TODO: TEST
@@ -95,6 +95,8 @@ public class PlayerManager {
     }
 
     private void handleStatusChanged(int status) {
+        // TODO: 仮
+        mCallback.onStartPlay();
     }
 
     private void handleError(String error) {
@@ -216,8 +218,8 @@ public class PlayerManager {
         }
 
         @Override
-        public void onSetShuffleModeEnabled(boolean enabled) {
-            Log.d(TAG, "MediaSessionCallback#onSetShuffleModeEnabled");
+        public void onSetShuffleMode(int enabled) {
+            Log.d(TAG, "MediaSessionCallback#onSetShuffleMode");
         }
 
 

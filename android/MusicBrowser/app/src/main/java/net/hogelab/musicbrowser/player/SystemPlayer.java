@@ -55,6 +55,7 @@ public class SystemPlayer implements Player {
         try {
             mMediaPlayer.setDataSource(mContext, item.getDescription().getMediaUri());
             mMediaPlayer.prepareAsync();
+            mCallback.onStatusChanged(0);
         } catch (IOException e) {
         }
     }
@@ -96,6 +97,7 @@ public class SystemPlayer implements Player {
         @Override
         public void onPrepared(MediaPlayer mp) {
             mMediaPlayer.start();
+            mCallback.onStatusChanged(1);
         }
     };
 

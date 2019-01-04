@@ -23,9 +23,7 @@ public class AudioMediaStoreQueueFactory extends BasePlayerQueueFactory {
     public List<MediaSessionCompat.QueueItem> createQueueFromMediaId(Context context, String mediaId, Bundle extras) {
         List<MediaSessionCompat.QueueItem> queue = new LinkedList<>();
 
-        Cursor cursor;
-
-        cursor = createTrackCursorFromMediaId(context, mediaId);
+        Cursor cursor = createTrackCursorFromMediaId(context, mediaId);
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 queue.add(newQueueItem(mediaId, cursor));
