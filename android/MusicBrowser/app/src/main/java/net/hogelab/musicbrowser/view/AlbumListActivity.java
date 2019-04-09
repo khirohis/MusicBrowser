@@ -51,6 +51,7 @@ public class AlbumListActivity extends AppCompatActivity {
                 return AudioMediaStoreCursorFactory.createArtistCursorLoader(AlbumListActivity.this, artistId);
             }
 
+            // TODO: null を return できない
             return null;
         }
 
