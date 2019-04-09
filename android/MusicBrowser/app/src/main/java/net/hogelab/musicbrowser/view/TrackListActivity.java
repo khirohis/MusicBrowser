@@ -51,10 +51,11 @@ public class TrackListActivity extends BaseActivity {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             final String albumId = args.getString(BUNDLE_ALBUM_ID_KEY);
             if (albumId != null) {
-                return AudioMediaStoreCursorFactory.createAlbumCursorLoader(TrackListActivity.this, albumId);
+                return AudioMediaStoreCursorFactory.createAlbumTrackListCursorLoader(TrackListActivity.this, albumId);
             }
 
-            return null;
+            // null を return できない。。どうしよう？
+            return AudioMediaStoreCursorFactory.createAllTrackListCursorLoader(TrackListActivity.this);
         }
 
         @Override
