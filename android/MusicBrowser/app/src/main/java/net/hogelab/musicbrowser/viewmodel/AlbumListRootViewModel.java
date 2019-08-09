@@ -32,7 +32,7 @@ public class AlbumListRootViewModel extends BaseObservable {
 
 
     public void setupFromCursor(Cursor cursor) {
-        if (cursor != null) {
+        if (cursor != null && cursor.getCount() > 0) {
             setId(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID)));
             setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST)));
             setNumberOfAlbums(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS))));
