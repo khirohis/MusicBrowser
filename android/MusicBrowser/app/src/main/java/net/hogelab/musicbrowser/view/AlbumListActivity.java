@@ -95,11 +95,11 @@ public class AlbumListActivity extends AppCompatActivity {
                     .commit();
         }
 
-        Bundle args = new Bundle();
         if (mArtistId != null) {
+            Bundle args = new Bundle();
             args.putString(BUNDLE_ARTIST_ID_KEY, mArtistId);
+            getSupportLoaderManager().initLoader(ARTIST_LOADER_ID, args, artistLoaderCallback);
         }
-        getSupportLoaderManager().initLoader(ARTIST_LOADER_ID, args, artistLoaderCallback);
     }
 
     @Override

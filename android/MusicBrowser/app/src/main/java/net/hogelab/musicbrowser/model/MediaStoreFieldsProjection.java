@@ -18,6 +18,7 @@ public class MediaStoreFieldsProjection {
     public static final String[] ALBUM_FIELDS_PROJECTION = {
             MediaStore.Audio.Albums._ID,
             MediaStore.Audio.Albums.ALBUM,
+            MediaStore.Audio.Albums.ALBUM_ID,
             MediaStore.Audio.Albums.ALBUM_ART,
             MediaStore.Audio.Albums.ARTIST,
             MediaStore.Audio.Albums.FIRST_YEAR,

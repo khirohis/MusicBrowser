@@ -1,13 +1,16 @@
 package net.hogelab.musicbrowser.viewmodel;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
 import net.hogelab.musicbrowser.R;
 import net.hogelab.musicbrowser.event.OpenAlbumEvent;
+import net.hogelab.musicbrowser.view.TrackListActivity;
 
 /**
  * Created by kobayasi on 2016/04/11.
@@ -21,6 +24,7 @@ public class AlbumListItemViewModel {
 
     private String id;
     private String album;
+    private String albumId;
     private String artist;
     private String albumArt;
 
@@ -36,8 +40,16 @@ public class AlbumListItemViewModel {
         if (cursor != null) {
             setId(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID)));
             setAlbum(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM)));
+            setAlbumId(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ID)));
             setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST)));
-            setAlbumArt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART)));
+
+            // Android Q にて ALBUM_ART が取得できないケースへの対応
+            String albumArt = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+            if (albumArt != null) {
+                setAlbumArt(albumArt);
+            } else {
+                // を試そうとしたけど難しいのでやめた
+            }
         }
     }
 
@@ -58,6 +70,14 @@ public class AlbumListItemViewModel {
         this.album = album;
     }
 
+    public String getAlbumId() {
+        return albumId;
+    }
+
+    public void setAlbumId(String albumId) {
+        this.albumId = albumId;
+    }
+
     public String getArtist() {
         return artist;
     }
@@ -75,18 +95,32 @@ public class AlbumListItemViewModel {
     }
 
     public String getThumbnailUrl() {
-        return "file://" + albumArt;
+        if (!TextUtils.isEmpty(albumArt)) {
+            return "file://" + albumArt;
+        }
+
+        return null;
+    }
+
+    public String getThumbnailAlbumId() {
+        if (TextUtils.isEmpty(albumArt)) {
+            return albumId;
+        }
+
+        return null;
     }
 
     public int getDefaultDrawable() {
         return R.drawable.media_music;
     }
 
-
     public View.OnClickListener onClickListItem() {
         return (view) -> {
-            Log.d(TAG, "onClick: " + album);
-//            EventBus.postMainLooper(new OpenAlbumEvent(id));
+            Log.d(TAG, "onClick: " + album + "(" + id + ", " + albumId + ")");
+
+            // TODO: 本来はViewに通知を送りViewが遷移する設計
+            Intent intent = TrackListActivity.newIntent(view.getContext(), albumId);
+            view.getContext().startActivity(intent);
         };
     }
 }

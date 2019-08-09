@@ -51,7 +51,8 @@ public class TrackListItemViewModel {
             setComposer(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.COMPOSER)));
             setAlbumId(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)));
             setAlbum(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)));
-            setTrack(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TRACK))));
+            // TODO: type integer
+//            setTrack(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TRACK))));
         }
     }
 

@@ -1,12 +1,14 @@
 package net.hogelab.musicbrowser.viewmodel;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 
 import net.hogelab.musicbrowser.event.OpenArtistEvent;
+import net.hogelab.musicbrowser.view.AlbumListActivity;
 
 
 /**
@@ -81,7 +83,10 @@ public class ArtistListItemViewModel {
     public View.OnClickListener onClickListItem() {
         return (view) ->{
             Log.d(TAG, "onClick: " + artist);
-//            EventBus.postMainLooper(new OpenArtistEvent(id));
+
+            // TODO: 本来はViewに通知を送りViewが遷移する設計
+            Intent intent = AlbumListActivity.newIntent(view.getContext(), id);
+            view.getContext().startActivity(intent);
         };
     }
 }
