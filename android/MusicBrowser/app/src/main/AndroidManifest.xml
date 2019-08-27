@@ -57,6 +57,13 @@
                 android:value=".view.MainActivity" />
         </activity>
 
+        <activity
+            android:name=".view.TestActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar.Translucent"
+            android:parentActivityName=".view.MainActivity">
+        </activity>
+
         <service
             android:name=".player.PlayerService"
             android:exported="true"

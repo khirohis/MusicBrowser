@@ -53,6 +53,11 @@ public class MainActivity extends AppCompatActivity
 
         mBinding.navView.setNavigationItemSelectedListener(this);
 
+        mBinding.appBarMain.contentMain.buttonTest.setOnClickListener((view) -> {
+            Intent intent = new Intent(this, TestActivity.class);
+            startActivity(intent);
+        });
+
         checkPermission();
     }
 
